@@ -18,7 +18,13 @@ Plain HTML/CSS/JS — open `index.html` in a browser or drop the folder on any s
 - `menu.json` — the live menu exported from the Taqeout store (`clients/NewEra-PROD-oToE40` in Firestore): categories, 235 items with sizes/prices, spice-level flag, extras, both locations with hours, tax (8% / 6%), delivery minimum & radius, popular items.
 - `img/` — 147 dish/category photos (480 px, from Cloudinary) named by item id.
 - `data/taqeout-firestore-export.json` — raw export, in case you need fields not in `menu.json`.
-- `test.responsive.js`, `test.concurrency.js` — Playwright tests. Serve the folder (`python3 -m http.server 8765`) then `node test.responsive.js` (phone/tablet/desktop full order flow with screenshots) and `node test.concurrency.js 40` (40 simultaneous customers).
+- Tests (Playwright; serve the folder first: `python3 -m http.server 8765`):
+  - `node test.scenarios.js` — 17 guest-ordering scenarios × phone/tablet/desktop (51 runs): guest checkout with no account, size/spice/extras/notes, cart merge/edit/remove, tax & tips, validation, delivery minimum + address, closed-hours scheduling, cart persistence, location switch, search, dialogs, staff board status flow, cross-tab updates, confirmation page.
+  - `node test.responsive.js` — full order flow with screenshots at three sizes.
+  - `node test.concurrency.js 40` — 40 simultaneous customers.
+
+### Guest checkout
+There are no accounts. A customer orders with first name, last name and mobile number; email is optional (for a receipt). Details are remembered on that device for next time.
 
 ### Where a backend plugs in
 Everything the app needs from a server goes through one object in `index.html`:

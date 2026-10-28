@@ -335,6 +335,10 @@ function renderTabs(){const cats=catsFor();$('#tabs').innerHTML=(DATA.popular.le
 function card(i){const min=Math.min(...i.prices.map(p=>p.price));const multi=i.prices.length>1;const img=i.img?`<img class="th" src="${i.img}" alt="" loading="lazy">`:'';
   return `<button class="item ${i.img?'':'noimg'}" data-id="${i.id}"><div><h3>${esc(i.name)}</h3>${i.desc?`<div class="d">${esc(i.desc)}</div>`:''}<div class="p"><span class="money">${multi?'from ':''}${fmt(min)}</span>${i.spice?'<span class="chip hot">Spice level</span>':''}</div></div>${img}</button>`;}
 function renderSections(){const q=S.q.trim().toLowerCase();let h='';
+  if(q){const cats=catsFor();const pool=cats.flatMap(c=>itemsFor(c.id));const nm=pool.filter(i=>i.name.toLowerCase().includes(q));const ds=pool.filter(i=>!nm.includes(i)&&i.desc.toLowerCase().includes(q));
+    if(nm.length)h+=`<section class="sec" id="sec-search"><h2>“${esc(S.q.trim())}”</h2><div class="cd">${nm.length} dish${nm.length===1?'':'es'}</div><div class="grid">${nm.map(card).join('')}</div></section>`;
+    if(ds.length)h+=`<section class="sec" id="sec-search2"><h2>${nm.length?'Also mentions':'Mentions'} “${esc(S.q.trim())}”</h2><div class="cd">${ds.length} dish${ds.length===1?'':'es'}</div><div class="grid">${ds.map(card).join('')}</div></section>`;
+    $('#sections').innerHTML=h||`<div class="empty">Nothing matches “${esc(S.q)}”.</div>`;return;}
   if(!q&&DATA.popular.length){const pop=DATA.popular.map(byId).filter(i=>i&&i.loc.includes(S.loc)).slice(0,6);if(pop.length)h+=`<section class="sec" id="sec-popular"><h2>Popular right now</h2><div class="cd">What the neighbourhood orders most.</div><div class="grid">${pop.map(card).join('')}</div></section>`;}
   catsFor().forEach(c=>{let its=itemsFor(c.id);if(q)its=its.filter(i=>(i.name+' '+i.desc).toLowerCase().includes(q));if(!its.length)return;
     h+=`<section class="sec" id="sec-${c.id}"><h2>${esc(c.label)}</h2>${c.desc?`<div class="cd">${esc(c.desc)}</div>`:''}<div class="grid">${its.map(card).join('')}</div></section>`;});
