@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New Era Indian Cuisine — Chestnut Hill & Plymouth Meeting</title>
+<meta name="description" content="Fresh, authentic Indian cooking in Chestnut Hill (Philadelphia) and Plymouth Meeting, PA. Dine in, take out, delivery and catering.">
+<link rel="icon" href="img/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ---------- Design tokens (reverse-engineered from the Tondo template) ---------- */
+:root{
+  --bg:#151412;            /* page */
+  --bg-sheet:#1D1B18;      /* raised sheet / cards */
+  --bg-card:#2A2723;       /* hover / inner */
+  --ink:#F2EDE3;           /* cream text */
+  --ink-soft:#B9B2A4;      /* lead paragraph */
+  --ink-mute:#948D80;      /* labels, meta */
+  --ink-dim:#7D776B;
+  --line:rgba(242,237,227,.14);
+  --accent:#F2B53A;        /* saffron — swap for #E5482B to get Tondo's tomato red */
+  --accent-ink:#151412;
+  --r-xl:26px; --r-lg:20px; --r-md:14px; --r-sm:10px;
+  --font:"Jost",ui-sans-serif,system-ui,sans-serif;
+  --max:1180px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-weight:400;line-height:1.45;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+::selection{background:var(--accent);color:var(--accent-ink)}
+
+.wrap{max-width:var(--max);margin:0 auto;padding:0 28px}
+@media(max-width:640px){.wrap{padding:0 18px}}
+
+/* type scale */
+h1,h2,h3,h4{font-weight:400;letter-spacing:-.04em;line-height:.98}
+h1{font-size:clamp(46px,7.2vw,92px)}
+h2{font-size:clamp(32px,4.2vw,54px);letter-spacing:-.035em;line-height:1.02}
+h3{font-size:24px;letter-spacing:-.025em;line-height:1.12}
+h4{font-size:19px;letter-spacing:-.015em;line-height:1.25}
+.mute{color:var(--ink-mute)}
+.soft{color:var(--ink-soft)}
+.lead{font-size:18px;line-height:1.45;color:var(--ink-soft);max-width:46ch}
+.label{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-mute)}
+.eyebrow{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-mute);margin-bottom:26px}
+.eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.second{color:var(--ink-mute)}   /* the muted second line of a headline */
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 22px;border-radius:999px;font-size:15px;font-weight:500;line-height:18px;border:1px solid transparent;transition:transform .2s,background .2s,border-color .2s;white-space:nowrap}
+.btn:hover{transform:translateY(-1px)}
+.btn-accent{background:var(--accent);color:var(--accent-ink)}
+.btn-cream{background:var(--ink);color:var(--accent-ink)}
+.btn-ghost{border-color:var(--line);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--ink-mute)}
+.link{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:500;border-bottom:1px solid var(--line);padding-bottom:3px}
+.link:hover{border-color:var(--ink)}
+.link svg{width:14px;height:14px}
+
+/* ---------- Nav ---------- */
+.nav{position:fixed;inset:0 0 auto 0;z-index:50;padding:18px 0;transition:background .3s,backdrop-filter .3s}
+.nav.scrolled{background:rgba(21,20,18,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{height:30px;width:auto}
+.brand span{font-size:19px;font-weight:500;letter-spacing:-.02em}
+.nav-links{display:flex;gap:28px;font-size:15px;color:var(--ink-soft)}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{display:flex;align-items:center;gap:10px}
+.burger{display:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);align-items:center;justify-content:center}
+.burger span{display:block;width:16px;height:1.5px;background:var(--ink);box-shadow:0 5px 0 var(--ink),0 -5px 0 var(--ink)}
+@media(max-width:900px){.nav-links{display:none}.burger{display:flex}.brand span{display:none}}
+.sheet-nav{position:fixed;inset:0;z-index:60;background:rgba(21,20,18,.96);display:none;flex-direction:column;justify-content:center;align-items:center;gap:28px;font-size:30px;letter-spacing:-.03em}
+.sheet-nav.open{display:flex}
+.sheet-nav .x{position:absolute;top:22px;right:24px;font-size:16px;color:var(--ink-mute)}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;min-height:100svh;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:40px;padding-top:120px;padding-bottom:60px;overflow:hidden}
+.hero h1{margin:22px 0 22px}
+.hero .lead{margin-bottom:34px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.hero-foot{position:absolute;left:28px;bottom:28px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:14px;color:var(--ink-mute)}
+.hero-foot .dot{width:8px;height:8px;border-radius:50%;background:#6DBE6A}
+.hero-foot .dot.closed{background:#C85A4A}
+
+/* turntable */
+.table{position:relative;aspect-ratio:1;width:min(100%,620px);margin-left:auto}
+.ring{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 42%,#2A2723 0%,#1D1B18 55%,#151412 100%);box-shadow:inset 0 0 0 1px var(--line),0 40px 90px rgba(0,0,0,.5)}
+.ring::after{content:"";position:absolute;inset:18%;border-radius:50%;border:1px dashed rgba(242,237,227,.08)}
+.spin{position:absolute;inset:0;transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+.plate{position:absolute;left:50%;top:50%;width:35%;aspect-ratio:1;margin:-17.5% 0 0 -17.5%;border-radius:50%;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.55),0 0 0 6px #151412;transition:transform .9s cubic-bezier(.2,.8,.2,1),opacity .6s;transform:rotate(var(--a)) translateY(-100%) rotate(calc(-1 * var(--a))) scale(.72);opacity:.55}
+.plate img{width:100%;height:100%;object-fit:cover}
+.plate.on{transform:rotate(var(--a)) translateY(-100%) rotate(calc(-1 * var(--a))) scale(1);opacity:1}
+.caption{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;width:46%}
+.caption .label{font-size:12px;margin-bottom:8px}
+.caption h4{font-size:clamp(16px,1.6vw,21px)}
+.caption .price{color:var(--ink-soft);margin-top:6px;font-size:15px}
+.arrows{display:flex;gap:8px;justify-content:center;margin-top:16px}
+.arrows button{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;transition:background .2s}
+.arrows button:hover{background:var(--ink);color:var(--accent-ink)}
+.arrows svg{width:14px;height:14px}
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;padding-top:110px;min-height:0}
+  .table{margin:10px auto 60px;width:min(100%,460px)}
+  .hero-foot{position:static;margin-top:26px;row-gap:4px}
+}
+
+/* ---------- Statement ---------- */
+.statement{padding-top:120px;padding-bottom:40px}
+.statement .grid{display:grid;grid-template-columns:200px 1fr;gap:30px}
+.statement p{font-size:clamp(26px,3.4vw,44px);letter-spacing:-.03em;line-height:1.08;max-width:22ch;color:var(--ink)}
+.statement .ico{display:inline-grid;place-items:center;width:.9em;height:.9em;border-radius:50%;background:var(--accent);color:var(--accent-ink);vertical-align:-.1em;margin:0 .12em;font-size:.55em}
+.statement .ico.img{background:none;overflow:hidden}
+.statement .ico img{width:100%;height:100%;object-fit:cover}
+@media(max-width:800px){.statement .grid{grid-template-columns:1fr;gap:18px}}
+
+/* ---------- Three rules ---------- */
+.rules{padding-top:40px;padding-bottom:120px}
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--bg-sheet);border:1px solid var(--line);border-radius:var(--r-xl);padding:30px 28px 32px;display:flex;flex-direction:column;gap:16px;min-height:260px}
+.card .num{font-size:13px;color:var(--ink-mute)}
+.card p{color:var(--ink-soft);font-size:16px}
+.card .spacer{flex:1}
+@media(max-width:860px){.cards3{grid-template-columns:1fr}}
+
+/* ---------- Menu sheet ---------- */
+.menu-wrap{padding-bottom:120px}
+.sheet{background:var(--bg-sheet);border-radius:var(--r-xl);padding:clamp(28px,5vw,64px);border:1px solid var(--line)}
+.menu-head{display:flex;justify-content:space-between;align-items:end;gap:30px;flex-wrap:wrap;margin-bottom:40px}
+.menu-head h2{max-width:14ch}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:34px}
+.tab{padding:9px 16px;border-radius:999px;border:1px solid var(--line);font-size:14px;color:var(--ink-soft);transition:all .2s}
+.tab:hover{color:var(--ink);border-color:var(--ink-mute)}
+.tab.on{background:var(--ink);color:var(--accent-ink);border-color:var(--ink)}
+.cat-note{color:var(--ink-mute);font-size:15px;margin-bottom:26px;max-width:70ch}
+.dishes{display:grid;grid-template-columns:1fr 1fr;gap:6px 40px}
+.dish{display:grid;grid-template-columns:1fr auto;gap:4px 18px;padding:16px 12px;margin:0 -12px;border-radius:var(--r-md);border-top:1px solid var(--line);transition:background .2s}
+.dish:hover{background:var(--bg-card)}
+.dish h4{grid-column:1}
+.dish .p{grid-column:2;grid-row:1;color:var(--ink-soft);font-size:17px}
+.dish .d{grid-column:1 / -1;color:var(--ink-mute);font-size:15px;line-height:1.4}
+.dish .tags{grid-column:1 / -1;display:flex;gap:6px;margin-top:4px}
+.tag{font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:999px;border:1px solid var(--line);color:var(--ink-mute)}
+.menu-foot{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-top:40px;padding-top:30px;border-top:1px solid var(--line);color:var(--ink-mute);font-size:14px}
+@media(max-width:800px){.dishes{grid-template-columns:1fr}}
+
+/* ---------- Room / kitchen ---------- */
+.room{padding-top:40px;padding-bottom:120px}
+.room .title{display:flex;align-items:center;gap:.25em;font-size:clamp(44px,7vw,96px);letter-spacing:-.04em;line-height:1;margin-bottom:60px}
+.room .title .pic{width:.9em;height:.9em;border-radius:50%;overflow:hidden;flex:none}
+.room .title .pic img{width:100%;height:100%;object-fit:cover}
+.room .big{border-radius:var(--r-xl);overflow:hidden;aspect-ratio:16/8;margin-bottom:60px}
+.room .big img{width:100%;height:100%;object-fit:cover}
+.room .cols{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+.room .cols h2{margin-bottom:20px}
+.room .cols p{color:var(--ink-soft);font-size:17px;margin-bottom:18px;max-width:48ch}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:70px}
+.stat{border-top:1px solid var(--line);padding-top:18px}
+.stat b{display:block;font-size:52px;font-weight:300;letter-spacing:-.04em;line-height:1;margin-bottom:10px}
+.stat span{color:var(--ink-mute);font-size:15px}
+@media(max-width:860px){.room .cols{grid-template-columns:1fr;gap:30px}.stats{grid-template-columns:1fr 1fr}.room .big{aspect-ratio:4/3}}
+
+/* ---------- Reviews ---------- */
+.notes{padding-bottom:120px}
+.notes .sheet{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.notes blockquote{font-size:clamp(24px,3vw,36px);letter-spacing:-.03em;line-height:1.12}
+.notes .src{color:var(--ink-mute);margin-top:18px;font-size:15px}
+.rev-links{display:flex;flex-direction:column;gap:12px}
+.rev-links a{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border:1px solid var(--line);border-radius:var(--r-md);transition:background .2s}
+.rev-links a:hover{background:var(--bg-card)}
+.rev-links small{color:var(--ink-mute);display:block;margin-top:3px}
+@media(max-width:860px){.notes .sheet{grid-template-columns:1fr}}
+
+/* ---------- Evenings / catering ---------- */
+.evenings{padding-bottom:120px}
+.sec-head{display:flex;justify-content:space-between;align-items:end;gap:30px;flex-wrap:wrap;margin-bottom:40px}
+.sec-head h2{max-width:16ch}
+.card .meta{color:var(--ink-mute);font-size:14px}
+.card .price{font-size:30px;font-weight:300;letter-spacing:-.03em}
+.card .price small{font-size:14px;color:var(--ink-mute);letter-spacing:0;margin-left:6px}
+
+/* ---------- Journal ---------- */
+.journal{padding-bottom:120px}
+.posts{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.post{border-radius:var(--r-xl);overflow:hidden;background:var(--bg-sheet);border:1px solid var(--line);display:flex;flex-direction:column}
+.post .img{aspect-ratio:4/3;overflow:hidden}
+.post .img img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.post:hover .img img{transform:scale(1.04)}
+.post .body{padding:24px 24px 28px;display:flex;flex-direction:column;gap:12px}
+.post .body p{color:var(--ink-soft);font-size:15px}
+@media(max-width:860px){.posts{grid-template-columns:1fr}}
+
+/* ---------- Form ---------- */
+.book{padding-bottom:120px}
+.book .sheet{display:grid;grid-template-columns:1fr 1.1fr;gap:60px}
+.book h2{margin-bottom:20px;max-width:12ch}
+.book .side p{color:var(--ink-soft);margin-bottom:14px;font-size:16px;max-width:40ch}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form .full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13px;color:var(--ink-mute)}
+.field input,.field select,.field textarea{background:var(--bg);border:1px solid var(--line);border-radius:var(--r-md);padding:13px 14px;color:var(--ink);font:inherit;font-size:15px;outline:0;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--ink-mute)}
+.field select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ink-mute) 50%),linear-gradient(135deg,var(--ink-mute) 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 15px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+.field textarea{min-height:96px;resize:vertical}
+.form-out{grid-column:1/-1;display:none;background:var(--bg);border:1px solid var(--line);border-radius:var(--r-md);padding:16px;font-size:14px;color:var(--ink-soft);white-space:pre-wrap}
+.form-out.show{display:block}
+.form-actions{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+@media(max-width:860px){.book .sheet{grid-template-columns:1fr;gap:30px}.form{grid-template-columns:1fr}}
+
+/* ---------- Visit ---------- */
+.visit{padding-bottom:120px}
+.visit .grid{display:grid;grid-template-columns:1fr 1fr;gap:60px}
+.visit h2{margin-bottom:30px;max-width:12ch}
+.hours{list-style:none;margin-bottom:40px}
+.hours li{display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid var(--line);font-size:16px}
+.hours li span:last-child{color:var(--ink-soft)}
+.hours li.today span:first-child::after{content:"today";font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-left:10px}
+.locs{display:grid;gap:14px}
+.loc{border:1px solid var(--line);border-radius:var(--r-lg);padding:22px}
+.loc h3{margin-bottom:8px}
+.loc p{color:var(--ink-soft);font-size:15px;margin-bottom:12px}
+.loc .row{display:flex;gap:18px;flex-wrap:wrap;font-size:15px}
+.visit .photo{border-radius:var(--r-xl);overflow:hidden;aspect-ratio:4/5}
+.visit .photo img{width:100%;height:100%;object-fit:cover}
+.contact{margin-top:30px;display:grid;gap:8px;font-size:15px;color:var(--ink-soft)}
+@media(max-width:860px){.visit .grid{grid-template-columns:1fr}.visit .photo{aspect-ratio:4/3}}
+
+/* ---------- FAQ ---------- */
+.faq{padding-bottom:120px}
+.faq .grid{display:grid;grid-template-columns:1fr 1.4fr;gap:40px}
+.faq .intro p{color:var(--ink-soft);margin-top:14px;max-width:34ch}
+.q{border-top:1px solid var(--line)}
+.q:last-child{border-bottom:1px solid var(--line)}
+.q button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:20px 0;text-align:left;font-size:19px;letter-spacing:-.01em}
+.q button span.pm{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;flex:none;font-size:18px;color:var(--ink-mute);transition:transform .3s}
+.q.open button span.pm{transform:rotate(45deg)}
+.q .a{max-height:0;overflow:hidden;transition:max-height .35s ease;color:var(--ink-soft);font-size:16px}
+.q .a p{padding:0 0 22px;max-width:60ch}
+.q.open .a{max-height:240px}
+@media(max-width:860px){.faq .grid{grid-template-columns:1fr}}
+
+/* ---------- CTA + footer ---------- */
+.cta{padding-top:60px;padding-bottom:120px;text-align:center}
+.cta h2{font-size:clamp(40px,7vw,88px);letter-spacing:-.04em;margin-bottom:34px}
+footer{border-top:1px solid var(--line);padding-top:40px;padding-bottom:50px;font-size:14px;color:var(--ink-mute)}
+footer .wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:center}
+footer nav{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
+footer nav a:hover{color:var(--ink)}
+footer .right{text-align:right}
+@media(max-width:700px){footer .wrap{grid-template-columns:1fr;text-align:center}footer .right{text-align:center}}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.spin,.plate{transition:none}}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="img/logo.png" alt="New Era Indian Cuisine"><span>New Era</span></a>
+    <nav class="nav-links">
+      <a href="#menu">Menu</a><a href="#kitchen">The kitchen</a><a href="#catering">Catering</a><a href="#story">Story</a><a href="#visit">Visit</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-cream" href="https://claude.ai/artifact/VeBro13etzDYNejebBe25o" target="_blank" rel="noopener">Order online</a>
+      <button class="burger" id="burger" aria-label="Menu"><span></span></button>
+    </div>
+  </div>
+</header>
+<div class="sheet-nav" id="sheetNav">
+  <button class="x" id="closeNav">Close</button>
+  <a href="#menu">Menu</a><a href="#kitchen">The kitchen</a><a href="#catering">Catering</a><a href="#story">Story</a><a href="#visit">Visit</a>
+  <a class="btn btn-accent" href="https://claude.ai/artifact/VeBro13etzDYNejebBe25o" target="_blank" rel="noopener">Order online</a>
+</div>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="hero wrap">
+  <div>
+    <div class="eyebrow">Chestnut Hill &middot; Plymouth Meeting</div>
+    <h1>Spice. Simmer.<br><span class="second">Savor.</span></h1>
+    <p class="lead">Home-style Indian cooking made with heart and heritage. Two neighbourhood rooms, one kitchen, and a tandoor that never really cools down.</p>
+    <div class="hero-actions">
+      <a class="btn btn-accent" href="https://claude.ai/artifact/VeBro13etzDYNejebBe25o" target="_blank" rel="noopener">Order online</a>
+      <a class="btn btn-ghost" href="#menu">See the menu</a>
+    </div>
+    <div class="hero-foot"><span class="dot" id="openDot"></span><span id="openText">Open today 11:00–21:00</span><span>&middot;</span><span>219 E Willow Grove Ave &amp; 1005 Germantown Pike</span></div>
+  </div>
+
+  <div class="table" id="table" aria-label="Featured dishes">
+    <div class="ring"></div>
+    <div class="spin" id="spin">
+      <div class="plate" style="--a:0deg"><img src="img/plate-curry.jpg" alt="Chicken curry"></div>
+      <div class="plate" style="--a:72deg"><img src="img/plate-biryani.jpg" alt="Biryani"></div>
+      <div class="plate" style="--a:144deg"><img src="img/plate-dal.jpg" alt="Dal tadka"></div>
+      <div class="plate" style="--a:216deg"><img src="img/plate-yellow.jpg" alt="Mango chicken"></div>
+      <div class="plate" style="--a:288deg"><img src="img/plate-samosa.jpg" alt="Vegetable samosa"></div>
+    </div>
+    <div class="caption">
+      <div class="label" id="capLabel">01 / 05 &middot; Chicken</div>
+      <h4 id="capName">Chicken Tikka Masala</h4>
+      <div class="price" id="capPrice">$16.99</div>
+      <div class="arrows">
+        <button id="prev" aria-label="Previous dish"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 3 5 8l5 5"/></svg></button>
+        <button id="next" aria-label="Next dish"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m6 3 5 5-5 5"/></svg></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STATEMENT ============ -->
+<section class="statement wrap rv">
+  <div class="grid">
+    <div class="label">How we cook</div>
+    <p>Fresh is always the best. <span class="ico img"><img src="img/dot-chili.jpg" alt=""></span> Spices ground in house, <span class="ico">&#9679;</span> curries simmered slowly, and <span class="ico img"><img src="img/plate-samosa.jpg" alt=""></span> naan pulled from the tandoor the moment you order.</p>
+  </div>
+</section>
+
+<!-- ============ THREE WAYS ============ -->
+<section class="rules wrap rv">
+  <div class="cards3">
+    <div class="card"><span class="num">01</span><h3>Dine in</h3><p>Two calm, comfortable rooms for a casual lunch or a long dinner. Walk in any day we are open; larger parties, give us a call.</p><span class="spacer"></span><a class="link" href="#visit">Find us <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 13 13 3M6 3h7v7"/></svg></a></div>
+    <div class="card"><span class="num">02</span><h3>Take out &amp; delivery</h3><p>Order online and pick up hot, or have it delivered within three miles of either location.</p><span class="spacer"></span><a class="link" href="https://claude.ai/artifact/VeBro13etzDYNejebBe25o" target="_blank" rel="noopener">Order online <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 13 13 3M6 3h7v7"/></svg></a></div>
+    <div class="card"><span class="num">03</span><h3>Catering</h3><p>Party trays of any size, or a full per-person package for events from twenty guests up. We cook, you host.</p><span class="spacer"></span><a class="link" href="#catering">See packages <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 13 13 3M6 3h7v7"/></svg></a></div>
+  </div>
+</section>
+
+<!-- ============ MENU ============ -->
+<section class="menu-wrap wrap" id="menu">
+  <div class="sheet rv">
+    <div class="menu-head">
+      <div><div class="eyebrow">The menu</div><h2>Everything, for the table.</h2></div>
+      <a class="btn btn-accent" href="https://claude.ai/artifact/VeBro13etzDYNejebBe25o" target="_blank" rel="noopener">Order online</a>
+    </div>
+    <div class="tabs" id="tabs" role="tablist"></div>
+    <p class="cat-note" id="catNote"></p>
+    <div class="dishes" id="dishes"></div>
+    <div class="menu-foot">
+      <span>Prices in USD. Most entrées are served with basmati rice. Tell us about allergies when you order — gluten-free and vegan options are marked.</span>
+      <a class="link" href="https://neweraindiancuisine.com/menu.html" target="_blank" rel="noopener">Printable menu <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 13 13 3M6 3h7v7"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE KITCHEN ============ -->
+<section class="room wrap" id="kitchen">
+  <div class="title rv">The <span class="pic"><img src="img/plate-dal.jpg" alt=""></span> kitchen</div>
+  <div class="big rv"><img src="img/s1.jpg" alt="Curries, samosas and spices on the table at New Era"></div>
+  <div class="cols rv">
+    <div>
+      <h2>Two rooms,<br>one long tradition.</h2>
+      <p>New Era started on the Hill — 219 E Willow Grove Avenue in Chestnut Hill — with a simple idea: good food, served well. A second room followed in Plymouth Meeting. Both are quiet, comfortable places to eat, whether it is a weekday lunch or a birthday dinner.</p>
+    </div>
+    <div>
+      <h2>Friends, cousins, cooks.</h2>
+      <p>Owner Hemant Sen Oli runs the room; chefs Dhan Khadka and Arjun Thapa run the kitchen. The three are friends and cousins from Nepal, and the menu is the food they grew up cooking — slow curries, charcoal-grilled tikka, and the house mango dishes you will not find elsewhere.</p>
+      <a class="link" href="#story">Read our story <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 13 13 3M6 3h7v7"/></svg></a>
+    </div>
+  </div>
+  <div class="stats rv">
+    <div class="stat"><b>2</b><span>rooms, in Chestnut Hill and Plymouth Meeting</span></div>
+    <div class="stat"><b>6+</b><span>years cooking for the neighbourhood</span></div>
+    <div class="stat"><b>120</b><span>dishes on the menu, a third of them vegetarian</span></div>
+    <div class="stat"><b>1</b><span>tandoor, lit before the doors open</span></div>
+  </div>
+</section>
+
+<!-- ============ NOTES FROM THE TABLE ============ -->
+<section class="notes wrap">
+  <div class="sheet rv">
+    <div>
+      <div class="eyebrow">Notes from the table</div>
+      <blockquote>Top-rated Indian cuisine in Philadelphia — and we would rather you heard it from our guests than from us.</blockquote>
+      <div class="src">Read the reviews on Google, then come add your own.</div>
+    </div>
+    <div class="rev-links">
+      <a href="https://www.google.com/search?q=new+era+indian+cuisine+chestnut+hill#lrd=0x89c6b9f2cd15b25b:0x8e390a296df31375,1" target="_blank" rel="noopener"><span>Chestnut Hill<small>Google reviews</small></span><span>&rarr;</span></a>
+      <a href="https://www.google.com/search?q=new+era+indian+cuisine+plymouth+meeting" target="_blank" rel="noopener"><span>Plymouth Meeting<small>Google reviews</small></span><span>&rarr;</span></a>
+      <a href="https://squareup.com/gift/ML2Q08X0KXDJR/order" target="_blank" rel="noopener"><span>Give a meal<small>E-gift cards</small></span><span>&rarr;</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CATERING ============ -->
+<section class="evenings wrap" id="catering">
+  <div class="sec-head rv">
+    <div><div class="eyebrow">Catering</div><h2>Feasts worth planning around.</h2></div>
+    <a class="link" href="#book">Ask about catering <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 13 13 3M6 3h7v7"/></svg></a>
+  </div>
+  <div class="cards3 rv">
+    <div class="card"><span class="meta">20 guests and up</span><h3>Small catering</h3><p>One veg appetizer, one chicken appetizer, one veg main, one chicken main, basmati rice, one bread and one dessert — for every guest.</p><span class="spacer"></span><div class="price">$20.99<small>per person</small></div></div>
+    <div class="card"><span class="meta">40–50 guests and up</span><h3>Large catering</h3><p>The same seven-course spread, priced for a bigger room. Same food, same care, a little less per head.</p><span class="spacer"></span><div class="price">$19.99<small>per person</small></div></div>
+    <div class="card"><span class="meta">Any size</span><h3>Party trays</h3><p>Any dish on the menu, in half or full trays. Perfect for the office, a game night, or a Tuesday you do not feel like cooking.</p><span class="spacer"></span><div class="price">Call<small>215-967-1159</small></div></div>
+  </div>
+</section>
+
+<!-- ============ STORY ============ -->
+<section class="journal wrap" id="story">
+  <div class="sec-head rv">
+    <div><div class="eyebrow">Our story</div><h2>Notes from the kitchen.</h2></div>
+    <a class="link" href="https://neweraindiancuisine.com/about.html" target="_blank" rel="noopener">About us <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 13 13 3M6 3h7v7"/></svg></a>
+  </div>
+  <div class="posts rv">
+    <article class="post"><div class="img"><img src="img/s2.jpg" alt="Curry and naan"></div><div class="body"><span class="label">The beginning</span><h3>A dream come true on the Hill</h3><p>Three cousins from Nepal opened a small Indian restaurant on Willow Grove Avenue. The neighbourhood paper called it a dream come true. Six years on, we still think so.</p></div></article>
+    <article class="post"><div class="img"><img src="img/plate-yellow.jpg" alt="Mango chicken"></div><div class="body"><span class="label">Signature</span><h3>Mango, mustard seed, cream</h3><p>The New Era mango dishes started as a kitchen experiment: fresh mango folded into a light onion-tomato cream, finished with popped mustard seed. Now there are five of them.</p></div></article>
+    <article class="post"><div class="img"><img src="img/s3.jpg" alt="Biryani, papadum and samosas"></div><div class="body"><span class="label">From the tandoor</span><h3>Twelve breads, one oven</h3><p>Plain, garlic, cheese, Peshawari, aalu-stuffed, laccha paratha — every bread is slapped onto the clay wall of the tandoor to order and arrives at the table in under two minutes.</p></div></article>
+  </div>
+</section>
+
+<!-- ============ CATERING FORM ============ -->
+<section class="book wrap" id="book">
+  <div class="sheet rv">
+    <div class="side">
+      <div class="eyebrow">Plan a party</div>
+      <h2>You host. We cook.</h2>
+      <p>Tell us the date, the headcount and the room, and we will send a menu and a quote by email, usually within a day.</p>
+      <p>Same-day orders or party trays: call Chestnut Hill on <b>215-967-1159</b> or Plymouth Meeting on <b>484-235-8175</b>.</p>
+    </div>
+    <form class="form" id="cateringForm" novalidate>
+      <div class="field"><label for="f-guests">Guests</label><input id="f-guests" type="number" min="1" value="20"></div>
+      <div class="field"><label for="f-date">Day</label><input id="f-date" type="date"></div>
+      <div class="field"><label for="f-loc">Pick up from</label><select id="f-loc"><option>Chestnut Hill, Philadelphia</option><option>Plymouth Meeting</option><option>Delivered to my venue</option></select></div>
+      <div class="field"><label for="f-pack">Package</label><select id="f-pack"><option>Small catering — $20.99 pp</option><option>Large catering — $19.99 pp</option><option>Party trays</option><option>Not sure yet</option></select></div>
+      <div class="field"><label for="f-name">Name</label><input id="f-name" type="text" autocomplete="name"></div>
+      <div class="field"><label for="f-email">Email</label><input id="f-email" type="email" autocomplete="email"></div>
+      <div class="field"><label for="f-phone">Phone</label><input id="f-phone" type="tel" autocomplete="tel"></div>
+      <div class="field"><label for="f-occ">Occasion</label><input id="f-occ" type="text" placeholder="Birthday, office lunch…"></div>
+      <div class="field full"><label for="f-notes">Notes</label><textarea id="f-notes" placeholder="Dietary needs, favourite dishes, anything else"></textarea></div>
+      <div class="form-out" id="formOut"></div>
+      <div class="form-actions">
+        <button class="btn btn-accent" type="submit">Request a quote</button>
+        <button class="btn btn-ghost" type="button" id="copyBtn" style="display:none">Copy request</button>
+        <span class="mute" style="font-size:14px">Opens your email app, addressed to neweraindiancuisine@gmail.com</span>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ============ VISIT ============ -->
+<section class="visit wrap" id="visit">
+  <div class="grid rv">
+    <div>
+      <div class="eyebrow">Visit</div>
+      <h2>Find the door, check the clock.</h2>
+      <ul class="hours" id="hours">
+        <li data-d="1"><span>Monday</span><span>11:00 – 21:00</span></li>
+        <li data-d="2"><span>Tuesday</span><span>11:00 – 21:00</span></li>
+        <li data-d="3"><span>Wednesday</span><span>Closed</span></li>
+        <li data-d="4"><span>Thursday</span><span>11:00 – 21:00</span></li>
+        <li data-d="5"><span>Friday</span><span>11:00 – 22:00</span></li>
+        <li data-d="6"><span>Saturday</span><span>11:00 – 22:00</span></li>
+        <li data-d="0"><span>Sunday</span><span>11:00 – 21:00</span></li>
+      </ul>
+      <div class="locs">
+        <div class="loc"><h3>Chestnut Hill</h3><p>219 E Willow Grove Ave, Philadelphia, PA 19118</p><div class="row"><a class="link" href="tel:+12159671159">215-967-1159</a><a class="link" href="https://www.google.com/maps/search/?api=1&query=New+Era+Indian+Cuisine+219+E+Willow+Grove+Ave+Philadelphia+PA+19118" target="_blank" rel="noopener">Open in Maps</a></div></div>
+        <div class="loc"><h3>Plymouth Meeting</h3><p>1005 Germantown Pike, Plymouth Meeting, PA 19462</p><div class="row"><a class="link" href="tel:+14842358175">484-235-8175</a><a class="link" href="https://www.google.com/maps/search/?api=1&query=New+Era+Indian+Cuisine+1005+Germantown+Pike+Plymouth+Meeting+PA+19462" target="_blank" rel="noopener">Open in Maps</a></div></div>
+      </div>
+      <div class="contact">
+        <span>Email: neweraindiancuisine@gmail.com</span>
+        <span>Catering &amp; WhatsApp: 201-233-6413</span>
+        <span>Delivery within 3 miles of either room.</span>
+      </div>
+    </div>
+    <div class="photo"><img src="img/food.jpg" alt="Dal with lentils, turmeric and coriander"></div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="faq wrap">
+  <div class="grid rv">
+    <div class="intro"><div class="eyebrow">Good to know</div><h2>The short answers.</h2><p>For anything else, call either room and a person will pick up.</p></div>
+    <div id="faq">
+      <div class="q"><button>How spicy is it? <span class="pm">+</span></button><div class="a"><p>As spicy as you like. Every curry can be made mild, medium or hot — just say so when you order. Vindaloo and Chettinad run hot by nature; korma and butter masala are gentle.</p></div></div>
+      <div class="q"><button>Do you deliver? <span class="pm">+</span></button><div class="a"><p>Yes, within a three-mile radius of either location, through our online ordering. Outside that, take-out is ready in about twenty minutes.</p></div></div>
+      <div class="q"><button>Can you cook around allergies and diets? <span class="pm">+</span></button><div class="a"><p>Most of the menu is naturally gluten-free, and a third of it is vegetarian with plenty of vegan options — they are tagged on the menu above. Tell us about allergies when ordering and the kitchen will steer you.</p></div></div>
+      <div class="q"><button>What is the minimum for catering? <span class="pm">+</span></button><div class="a"><p>The per-person packages start at twenty guests. Below that, party trays of any dish work for any size group — call and we will put it together.</p></div></div>
+      <div class="q"><button>Are you open on Wednesdays? <span class="pm">+</span></button><div class="a"><p>No — Wednesday is the kitchen's day off. Every other day we open at 11:00, closing at 21:00 Sunday to Thursday and 22:00 on Friday and Saturday.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="cta wrap rv">
+  <h2>Come hungry.<br><span class="second">Bring everyone.</span></h2>
+  <a class="btn btn-accent" href="https://claude.ai/artifact/VeBro13etzDYNejebBe25o" target="_blank" rel="noopener">Order online</a>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><img src="img/logo.png" alt="New Era Indian Cuisine" style="height:28px;margin-bottom:8px">&copy; <span id="yr"></span> New Era Indian Cuisine</div>
+    <nav><a href="#menu">Menu</a><a href="#kitchen">The kitchen</a><a href="#catering">Catering</a><a href="#story">Story</a><a href="#visit">Visit</a><a href="https://squareup.com/gift/ML2Q08X0KXDJR/order" target="_blank" rel="noopener">Gift cards</a></nav>
+    <div class="right">The real destiny for tasty foods.</div>
+  </div>
+</footer>
+
+<script src="menu-data.js"></script>
+<script>
+(function(){
+  const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+  $('#yr').textContent=new Date().getFullYear();
+
+  /* nav */
+  const nav=$('#nav');
+  const onScroll=()=>nav.classList.toggle('scrolled',scrollY>30);
+  addEventListener('scroll',onScroll,{passive:true});onScroll();
+  $('#burger').onclick=()=>$('#sheetNav').classList.add('open');
+  $('#closeNav').onclick=()=>$('#sheetNav').classList.remove('open');
+  $$('#sheetNav a').forEach(a=>a.onclick=()=>$('#sheetNav').classList.remove('open'));
+
+  /* hours / open now */
+  const HOURS={0:[11,21],1:[11,21],2:[11,21],3:null,4:[11,21],5:[11,22],6:[11,22]};
+  const now=new Date(), d=now.getDay(), h=HOURS[d];
+  $$('#hours li').forEach(li=>li.classList.toggle('today',+li.dataset.d===d));
+  const dot=$('#openDot'), txt=$('#openText');
+  if(!h){dot.classList.add('closed');txt.textContent='Closed today (Wednesday)';}
+  else{const mins=now.getHours()*60+now.getMinutes();const open=mins>=h[0]*60&&mins<h[1]*60;
+    dot.classList.toggle('closed',!open);txt.textContent=(open?'Open now, until ':'Open today ')+(open?h[1]+':00':h[0]+':00–'+h[1]+':00');}
+
+  /* turntable */
+  const FEAT=[["Chicken","Chicken Tikka Masala",16.99],["Biryani","New Era Chef Biryani",20.99],["Vegetarian","Dal Tadka",15.50],["Mango Specialties","Mango Chicken",18.00],["Appetizers","Vegetable Samosa",5.25]];
+  const plates=$$('.plate'), spin=$('#spin'); let idx=0, rot=0;
+  function show(i,dir){const n=FEAT.length;const ni=((i%n)+n)%n;const step=dir===undefined?0:dir;rot-=step*72;idx=ni;
+    spin.style.transform=`rotate(${rot}deg)`;
+    plates.forEach((p,k)=>{p.classList.toggle('on',k===ni);p.style.setProperty('--inv',`${-rot}deg`);});
+    // keep plates upright: counter-rotate each plate by the ring rotation
+    plates.forEach(p=>{const a=p.style.getPropertyValue('--a');p.style.transform=`rotate(${a}) translateY(-100%) rotate(calc(-1 * ${a})) rotate(${-rot}deg) scale(${p.classList.contains("on")?1:.7})`;});
+    $('#capLabel').innerHTML=String(ni+1).padStart(2,'0')+' / '+String(n).padStart(2,'0')+' &middot; '+FEAT[ni][0];
+    $('#capName').textContent=FEAT[ni][1];$('#capPrice').textContent='$'+FEAT[ni][2].toFixed(2);}
+  show(0);
+  $('#next').onclick=()=>show(idx+1,1);$('#prev').onclick=()=>show(idx-1,-1);
+  plates.forEach((p,k)=>p.onclick=()=>{const diff=((k-idx+5)%5);show(k,diff<=2?diff:diff-5);});
+  let auto=setInterval(()=>show(idx+1,1),4200);
+  $('#table').addEventListener('pointerenter',()=>clearInterval(auto));
+  $('#table').addEventListener('pointerleave',()=>{clearInterval(auto);auto=setInterval(()=>show(idx+1,1),4200);});
+
+  /* menu */
+  const tabs=$('#tabs'), dishes=$('#dishes'), note=$('#catNote');
+  const TAG={v:'Veg',vg:'Vegan',gf:'GF'};
+  function render(id){MENU.forEach(c=>{});const c=MENU.find(c=>c.id===id)||MENU[0];
+    $$('.tab',tabs).forEach(t=>t.classList.toggle('on',t.dataset.id===c.id));
+    note.textContent=c.note; note.style.display=c.note?'':'none';
+    dishes.innerHTML=c.items.map(([n,p,d,t])=>`<div class="dish"><h4>${n}</h4><span class="p">$${p.toFixed(2)}</span>${d?`<span class="d">${d}</span>`:''}${t&&t.length?`<span class="tags">${t.map(x=>`<span class="tag">${TAG[x]}</span>`).join('')}</span>`:''}</div>`).join('');
+    try{localStorage.setItem('ne-tab',c.id)}catch(e){}}
+  tabs.innerHTML=MENU.map(c=>`<button class="tab" role="tab" data-id="${c.id}">${c.name}</button>`).join('');
+  tabs.onclick=e=>{const t=e.target.closest('.tab');if(t)render(t.dataset.id);};
+  let start='appetizers';try{start=localStorage.getItem('ne-tab')||start}catch(e){}
+  render(start);
+
+  /* faq */
+  $$('#faq .q button').forEach(b=>b.onclick=()=>{const q=b.parentElement;const was=q.classList.contains('open');$$('#faq .q').forEach(x=>x.classList.remove('open'));if(!was)q.classList.add('open');});
+
+  /* catering form -> mailto + copyable text */
+  const form=$('#cateringForm'), out=$('#formOut'), copy=$('#copyBtn');
+  form.onsubmit=e=>{e.preventDefault();
+    const v=id=>$('#'+id).value.trim();
+    const body=`Catering request — New Era Indian Cuisine\n\nGuests: ${v('f-guests')}\nDate: ${v('f-date')||'(not set)'}\nPick up / deliver: ${v('f-loc')}\nPackage: ${v('f-pack')}\nOccasion: ${v('f-occ')||'—'}\n\nName: ${v('f-name')}\nEmail: ${v('f-email')}\nPhone: ${v('f-phone')}\n\nNotes:\n${v('f-notes')||'—'}`;
+    out.textContent=body;out.classList.add('show');copy.style.display='';
+    const href='mailto:neweraindiancuisine@gmail.com?subject='+encodeURIComponent('Catering request — '+(v('f-name')||'New enquiry'))+'&body='+encodeURIComponent(body);
+    try{location.href=href}catch(err){}
+  };
+  copy.onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(out.textContent).then(()=>{copy.textContent='Copied';setTimeout(()=>copy.textContent='Copy request',1500)}).catch(()=>{});};
+
+  /* reveal on scroll */
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+  $$('.rv').forEach(el=>io.observe(el));
+})();
+</script>
+</body>
+</html>

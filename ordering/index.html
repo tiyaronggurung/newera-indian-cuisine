@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Order Online — New Era Indian Cuisine</title>
+<meta name="description" content="Order pickup or delivery from New Era Indian Cuisine, Chestnut Hill and Plymouth Meeting.">
+<link rel="icon" href="img/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== tokens (structure from Heartland/Aladdin's, colour from New Era) ===== */
+:root{
+  --bg:#F5F7F7; --card:#FFFFFF; --ink:#203645; --ink-2:#6B747D; --ink-3:#9AA1A8;
+  --line:rgba(16,16,16,.12); --line-2:rgba(16,16,16,.07);
+  --brand:#2E6B2E; --brand-dk:#245424; --brand-lt:#E8F2E8; --accent:#F2B53A;
+  --danger:#C0392B; --ok:#2E7D32;
+  --r:8px; --r2:12px; --r3:20px;
+  --sh:0 1px 2px rgba(32,54,69,.06),0 4px 14px rgba(32,54,69,.06);
+  --font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --top:60px; --cartw:360px;
+  --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);line-height:1.45;font-size:15px;-webkit-font-smoothing:antialiased;padding-top:var(--sat)}
+img{display:block;max-width:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+a{color:var(--brand);text-decoration:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+[hidden]{display:none!important}
+.money{font-variant-numeric:tabular-nums}
+
+/* ===== app bar ===== */
+.bar{position:sticky;top:var(--sat);z-index:40;height:var(--top);background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:0 14px}
+.bar .ib{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--ink);flex:none}
+.bar .ib:hover{background:var(--bg)}
+.bar .logo{height:38px;width:auto;border-radius:6px}
+.bar .title{font-weight:700;font-size:18px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .sp{flex:1}
+.loc-pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:600;background:#fff;white-space:nowrap}
+.loc-pill svg{width:14px;height:14px}
+.cart-btn{position:relative}
+.badge{position:absolute;top:2px;right:0;min-width:18px;height:18px;border-radius:9px;background:var(--brand);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 5px}
+@media(min-width:1100px){.cart-btn{display:none}}
+@media(max-width:560px){.bar .title{font-size:16px}.loc-pill span.t{display:none}}
+
+/* ===== layout ===== */
+.shell{display:grid;grid-template-columns:minmax(0,1fr) var(--cartw);gap:20px;max-width:1240px;margin:0 auto;padding:16px 16px 120px;align-items:start}
+@media(max-width:1099px){.shell{grid-template-columns:minmax(0,1fr);padding-bottom:110px}}
+@media(max-width:640px){.shell{padding:10px 10px 110px}}
+.main{min-width:0}
+
+/* ===== store card ===== */
+.store{background:var(--card);border-radius:var(--r3);box-shadow:var(--sh);overflow:hidden;margin-bottom:14px}
+.store .banner{aspect-ratio:21/9;position:relative;overflow:hidden;background:#ddd}
+.store .banner img{width:100%;height:100%;object-fit:cover}
+.store .banner .ov{position:absolute;inset:auto 0 0 0;padding:40px 20px 16px;background:linear-gradient(transparent,rgba(0,0,0,.55));color:#fff}
+.store .banner .ov h1{font-size:clamp(20px,3vw,28px);font-weight:700;letter-spacing:-.01em}
+.store .body{display:grid;grid-template-columns:1fr auto;gap:16px;padding:16px 20px;align-items:center}
+.store .addr{font-size:14px;color:var(--ink-2);line-height:1.5}
+.store .addr b{color:var(--ink)}
+.store .addr a{font-weight:600}
+.status{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;margin-top:4px}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.status.closed::before{background:var(--danger)}
+.seg{display:inline-flex;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{padding:8px 16px;border-radius:999px;font-weight:600;font-size:14px;color:var(--ink-2)}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:var(--sh)}
+.when{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.when select{border:1px solid var(--line);border-radius:999px;padding:8px 32px 8px 12px;background:#fff;font-size:14px;font-weight:600;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ink-2) 50%),linear-gradient(135deg,var(--ink-2) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+@media(max-width:760px){.store .body{grid-template-columns:1fr}.when{justify-content:flex-start}}
+
+/* ===== category tabs ===== */
+.tabs-wrap{position:sticky;top:calc(var(--top) + var(--sat));z-index:30;background:var(--bg);padding:8px 0 10px;margin-bottom:6px}
+.tabs{display:flex;align-items:center;gap:6px;background:#fff;border-radius:999px;box-shadow:var(--sh);padding:6px;overflow:hidden}
+.tabs .search-btn{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex:none;color:var(--ink-2)}
+.tabs .search-btn:hover,.tabs .search-btn.on{background:var(--brand-lt);color:var(--brand)}
+.tabs .scroller{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1;scroll-behavior:smooth}
+.tabs .scroller::-webkit-scrollbar{display:none}
+.tab{padding:9px 14px;border-radius:999px;font-size:14px;font-weight:600;color:var(--ink-2);white-space:nowrap;flex:none}
+.tab:hover{color:var(--ink)}
+.tab.on{background:var(--brand-lt);color:var(--brand)}
+.tabs .chev{width:34px;height:38px;display:grid;place-items:center;color:var(--ink-2);flex:none}
+.search-row{display:none;margin-top:8px}
+.search-row.on{display:flex}
+.search-row input{flex:1;border:1px solid var(--line);border-radius:999px;padding:11px 16px;background:#fff;font-size:15px;outline:0}
+.search-row input:focus{border-color:var(--brand)}
+
+/* ===== notices ===== */
+.notice{display:flex;gap:10px;align-items:flex-start;background:#FFF6E0;border:1px solid #F3DFA2;border-radius:var(--r2);padding:12px 14px;font-size:14px;margin-bottom:14px}
+.notice svg{width:18px;height:18px;flex:none;color:#9A6B00;margin-top:1px}
+
+/* ===== sections & cards ===== */
+.sec{margin:6px 0 22px;scroll-margin-top:calc(var(--top) + var(--sat) + 70px)}
+.sec h2{font-size:22px;font-weight:700;letter-spacing:-.01em;margin:10px 0 4px}
+.sec .cd{font-size:14px;color:var(--ink-2);margin-bottom:10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+.item{display:grid;grid-template-columns:1fr 96px;gap:12px;background:var(--card);border-radius:var(--r2);box-shadow:var(--sh);padding:14px;text-align:left;transition:transform .15s,box-shadow .15s;min-height:112px;border:1px solid transparent}
+.item:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(32,54,69,.12)}
+.item:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.item.noimg{grid-template-columns:1fr}
+.item h3{font-size:16px;font-weight:600;line-height:1.3;margin-bottom:4px}
+.item .d{font-size:13.5px;color:var(--ink-2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.item .p{margin-top:8px;font-weight:600;font-size:14.5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.item .p .chip{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;background:var(--brand-lt);color:var(--brand);padding:3px 7px;border-radius:999px}
+.item .p .chip.hot{background:#FDECEA;color:#B23B2E}
+.item .th{width:96px;height:96px;border-radius:10px;object-fit:cover;background:#eee}
+.empty{padding:40px;text-align:center;color:var(--ink-2)}
+
+/* ===== cart (desktop sticky / drawer) ===== */
+.cart{background:var(--card);border-radius:var(--r3);box-shadow:var(--sh);position:sticky;top:calc(var(--top) + var(--sat) + 16px);max-height:calc(100vh - var(--top) - 32px);display:flex;flex-direction:column;overflow:hidden}
+.cart .hd{padding:16px 18px;border-bottom:1px solid var(--line-2);display:flex;align-items:center;justify-content:space-between}
+.cart .hd h2{font-size:18px;font-weight:700}
+.cart .hd .x{display:none}
+.cart .list{overflow:auto;flex:1;padding:6px 18px}
+.cart .emp{text-align:center;color:var(--ink-2);padding:60px 10px;font-size:14px}
+.cart .emp svg{width:36px;height:36px;color:var(--ink-3);margin:0 auto 10px}
+.ci{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:12px 0;border-bottom:1px solid var(--line-2)}
+.ci .n{font-weight:600;font-size:14.5px}
+.ci .m{font-size:12.5px;color:var(--ink-2)}
+.ci .pr{font-weight:600;font-size:14px;text-align:right}
+.ci .q{grid-column:1/-1;display:flex;align-items:center;gap:6px;margin-top:4px}
+.qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.qty button{width:32px;height:30px;display:grid;place-items:center;font-size:18px;color:var(--brand)}
+.qty button:hover{background:var(--brand-lt)}
+.qty span{min-width:28px;text-align:center;font-weight:600;font-size:14px}
+.ci .rm{margin-left:auto;font-size:12.5px;color:var(--ink-2);text-decoration:underline}
+.cart .ft{padding:12px 18px 16px;border-top:1px solid var(--line-2);background:#fff}
+.tot{display:flex;justify-content:space-between;font-size:14px;color:var(--ink-2);padding:3px 0}
+.tot.big{font-size:17px;color:var(--ink);font-weight:700;padding-top:8px}
+.tipbar{display:flex;gap:6px;margin:8px 0 6px}
+.tipbar button{flex:1;border:1px solid var(--line);border-radius:999px;padding:7px 0;font-size:13px;font-weight:600;color:var(--ink-2)}
+.tipbar button.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:13px 20px;font-weight:700;font-size:15px;transition:background .15s,transform .1s;width:100%}
+.btn:active{transform:scale(.99)}
+.btn-p{background:var(--brand);color:#fff}
+.btn-p:hover{background:var(--brand-dk)}
+.btn-p:disabled{background:#B9C4B9;cursor:not-allowed}
+.btn-o{border:1px solid var(--line);color:var(--ink);background:#fff}
+.btn-o:hover{background:var(--bg)}
+.btn-g{color:var(--brand);width:auto;padding:8px 12px}
+@media(max-width:1099px){
+  .cart{position:fixed;inset:0;z-index:60;border-radius:0;max-height:none;transform:translateX(100%);transition:transform .25s ease;top:0;padding-top:var(--sat)}
+  .cart.open{transform:none}
+  .cart .hd .x{display:grid}
+  .cart .ft{padding-bottom:calc(16px + var(--sab))}
+}
+@media(min-width:700px) and (max-width:1099px){.cart{left:auto;width:420px;box-shadow:-10px 0 40px rgba(0,0,0,.18)}}
+.scrim{position:fixed;inset:0;background:rgba(32,54,69,.4);z-index:55;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.on{opacity:1;pointer-events:auto}
+.viewbar{position:fixed;left:12px;right:12px;bottom:calc(12px + var(--sab));z-index:50;display:none}
+.viewbar .btn{box-shadow:0 8px 24px rgba(0,0,0,.2);justify-content:space-between}
+@media(max-width:1099px){.viewbar.show{display:block}}
+
+/* ===== modal (item / hours / checkout) ===== */
+.modal{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;padding:16px}
+.modal.on{display:flex}
+.modal .bg{position:absolute;inset:0;background:rgba(32,54,69,.5)}
+.sheet{position:relative;background:#fff;border-radius:var(--r3);width:min(560px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.sheet.wide{width:min(760px,100%)}
+.sheet .x{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.9);display:grid;place-items:center;z-index:2;box-shadow:var(--sh)}
+.sheet .img{aspect-ratio:16/9;background:#eee;flex:none}
+.sheet .img img{width:100%;height:100%;object-fit:cover}
+.sheet .sc{overflow:auto;padding:18px 20px}
+.sheet h2{font-size:22px;font-weight:700;letter-spacing:-.01em;margin-bottom:6px;padding-right:30px}
+.sheet .desc{color:var(--ink-2);font-size:14.5px;margin-bottom:14px}
+.grp{margin:14px 0}
+.grp .gh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.grp .gh b{font-size:15px}
+.grp .gh small{font-size:12px;color:var(--ink-2);background:var(--bg);padding:2px 8px;border-radius:999px}
+.opt{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;cursor:pointer}
+.opt:has(input:checked){border-color:var(--brand);background:var(--brand-lt)}
+.opt input{accent-color:var(--brand);width:18px;height:18px}
+.opt .ol{flex:1;font-size:14.5px}
+.opt .op{font-size:14px;font-weight:600;color:var(--ink-2)}
+.sheet textarea,.sheet input[type=text],.sheet input[type=tel],.sheet input[type=email],.sheet select{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-size:15px;outline:0;background:#fff}
+.sheet textarea:focus,.sheet input:focus,.sheet select:focus{border-color:var(--brand)}
+.sheet .act{display:flex;gap:10px;align-items:center;padding:12px 20px calc(14px + var(--sab));border-top:1px solid var(--line-2);background:#fff}
+.sheet .act .btn{flex:1}
+@media(max-width:640px){.modal{padding:0;align-items:flex-end}.sheet{border-radius:var(--r3) var(--r3) 0 0;max-height:94vh;width:100%}.sheet.wide{width:100%}}
+
+/* checkout */
+.f{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.f .full{grid-column:1/-1}
+.f label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:5px}
+.f label.opt{display:flex;font-size:inherit;font-weight:400;color:inherit;margin-bottom:0}
+.f .err{border-color:var(--danger)!important}
+.ferr{color:var(--danger);font-size:13px;margin-top:6px;min-height:0}
+@media(max-width:520px){.f{grid-template-columns:1fr}}
+.sum{background:var(--bg);border-radius:12px;padding:12px 14px;margin-top:12px}
+.sum .ci{padding:6px 0}
+.pay{display:grid;gap:8px}
+.pay .opt.dis{opacity:.55;cursor:not-allowed}
+.hours li{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line-2);font-size:14.5px}
+.hours li.today{font-weight:700;color:var(--brand)}
+
+/* confirmation + staff board */
+.page{max-width:720px;margin:0 auto;padding:24px 16px 100px}
+.ok-card{background:#fff;border-radius:var(--r3);box-shadow:var(--sh);padding:28px 24px;text-align:center}
+.ok-card .tick{width:64px;height:64px;border-radius:50%;background:var(--brand-lt);color:var(--brand);display:grid;place-items:center;margin:0 auto 14px}
+.ok-card .tick svg{width:30px;height:30px}
+.ok-card h2{font-size:24px;margin-bottom:4px}
+.ok-card .num{font-size:14px;color:var(--ink-2);margin-bottom:16px}
+.ok-card .msg{font-size:14.5px;color:var(--ink-2);text-align:left;background:var(--bg);border-radius:12px;padding:14px;margin:14px 0}
+.board h2{font-size:22px;margin-bottom:12px}
+.board .filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.board .filters button{border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:600;background:#fff;color:var(--ink-2)}
+.board .filters button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.ord{background:#fff;border-radius:var(--r2);box-shadow:var(--sh);padding:14px 16px;margin-bottom:10px;display:grid;grid-template-columns:1fr auto;gap:8px 12px}
+.ord .h{font-weight:700;font-size:15px}
+.ord .s{font-size:13px;color:var(--ink-2)}
+.ord .lines{grid-column:1/-1;font-size:14px;color:var(--ink);padding:6px 0;border-top:1px solid var(--line-2)}
+.ord .lines div{padding:2px 0}
+.ord .st{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:var(--bg)}
+.ord .st.new{background:#FFF1C9;color:#8A5B00}.ord .st.preparing{background:#DCEBFF;color:#1B4F9C}.ord .st.ready{background:var(--brand-lt);color:var(--brand)}.ord .st.done{background:#EEE;color:#666}
+.ord .acts{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}
+.ord .acts button{border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;background:#fff}
+.pill-mode{font-size:12px;color:var(--ink-2);background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 10px;display:inline-block;margin-bottom:10px}
+.toast{position:fixed;left:50%;bottom:calc(84px + var(--sab));transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:999px;font-size:14px;font-weight:600;opacity:0;transition:all .25s;z-index:80;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%)}
+footer{max-width:1240px;margin:0 auto;padding:10px 16px 40px;font-size:12.5px;color:var(--ink-3);display:flex;gap:14px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <button class="ib" id="menuBtn" aria-label="Categories"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  <img class="logo" src="img/logo.jpg" alt="">
+  <div class="title">New Era Indian Cuisine</div>
+  <div class="sp"></div>
+  <button class="loc-pill" id="locBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s7-7 7-12a7 7 0 0 0-14 0c0 5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg><span class="t" id="locName">Chestnut Hill</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>
+  <button class="ib cart-btn" id="cartBtn" aria-label="Your order"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 8h-12z"/><path d="M6 6 5 3H2"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg><span class="badge" id="badge" hidden>0</span></button>
+</header>
+
+<div id="viewMenu">
+<div class="shell">
+  <main class="main">
+    <section class="store">
+      <div class="banner"><img src="img/menubg.jpg" alt=""><div class="ov"><h1 id="storeTitle">New Era Indian Cuisine — Chestnut Hill</h1></div></div>
+      <div class="body">
+        <div class="addr"><b id="storeAddr"></b><br>Phone: <a id="storePhone" href="#"></a> · <a href="#" id="hoursLink">View hours</a><div class="status" id="storeStatus">Open now</div></div>
+        <div class="when">
+          <div class="seg" id="modeSeg"><button data-m="pickup" class="on">Pickup</button><button data-m="delivery">Delivery</button></div>
+          <select id="whenSel" aria-label="When"></select>
+        </div>
+      </div>
+    </section>
+
+    <div class="tabs-wrap">
+      <div class="tabs">
+        <button class="search-btn" id="searchBtn" aria-label="Search menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+        <div class="scroller" id="tabs"></div>
+        <button class="chev" id="chevR" aria-label="More categories"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></button>
+      </div>
+      <div class="search-row" id="searchRow"><input id="q" type="search" placeholder="Search dishes — e.g. naan, tikka, vegan"></div>
+    </div>
+
+    <div id="notice"></div>
+    <div id="sections"></div>
+  </main>
+
+  <aside class="cart" id="cart" aria-label="Your order">
+    <div class="hd"><h2>Your order</h2><button class="ib x" id="cartX" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="list" id="cartList"></div>
+    <div class="ft" id="cartFt"></div>
+  </aside>
+</div>
+<div class="viewbar" id="viewbar"><button class="btn btn-p" id="viewOrder"><span id="vbCount">0 items</span><span>View order</span><span class="money" id="vbTotal">$0.00</span></button></div>
+<footer><span>© <span id="yr"></span> New Era Indian Cuisine</span><span>Chestnut Hill: 215-967-1159</span><span>Plymouth Meeting: 484-235-8175</span><span><a href="https://claude.ai/artifact/PR7CdNihZRJXBetbhAp14T">Main site</a></span><span><a href="#orders" id="staffLink">Staff</a></span></footer>
+</div>
+
+<div id="viewDone" class="page" hidden></div>
+<div id="viewBoard" class="page board" hidden></div>
+
+<div class="scrim" id="scrim"></div>
+<div class="modal" id="modal"><div class="bg" data-close></div><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(async function(){
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const fmt=n=>'$'+(Math.round(n*100)/100).toFixed(2);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+$('#yr').textContent=new Date().getFullYear();
+
+/* ---------- data ---------- */
+let DATA;
+try{DATA=await (await fetch('menu.json')).json();}catch(e){$('#sections').innerHTML='<div class="empty">Menu could not be loaded. Please refresh.</div>';return;}
+const CATNAME={'"Dinner special" Limited Time offer !!!':'Dinner Special · limited time','New Era Daily special!!':'Daily Specials','Go Extra Large (Family size)':'Family Size (32 oz)','veg. lunch Combo':'Veg Lunch Combos','Non- veg Lunch combo':'Non-Veg Lunch Combos','Tikka sauce only':'Tikka Sauce','New Era Fry Rice':'Fried Rice','Vegetarian Dishes':'Vegetarian','Chicken Dishes':'Chicken','Lamb Dishes':'Lamb','Paneer Dishes':'Paneer'};
+DATA.categories.forEach(c=>c.label=CATNAME[c.name]||c.name);
+const SPICE=['Mild','Medium','Hot','Extra hot'];
+const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+/* ---------- state ---------- */
+const S={loc:LS.get('ne.loc',DATA.locations[0].id),mode:LS.get('ne.mode','pickup'),when:'asap',cart:LS.get('ne.cart',[]),tip:LS.get('ne.tip',15),q:''};
+const loc=()=>DATA.locations.find(l=>l.id===S.loc)||DATA.locations[0];
+const catsFor=()=>DATA.categories.filter(c=>c.loc.includes(S.loc)&&DATA.items.some(i=>i.cat===c.id&&i.loc.includes(S.loc)));
+const itemsFor=c=>DATA.items.filter(i=>i.cat===c&&i.loc.includes(S.loc));
+const byId=id=>DATA.items.find(i=>i.id===id);
+
+/* ---------- hours ---------- */
+function openInfo(d=new Date()){const h=loc().hours[d.getDay()];if(!h)return{open:false,today:null};const m=d.getHours()*60+d.getMinutes();const [a,b]=h.map(t=>{const[x,y]=t.split(':').map(Number);return x*60+y});return{open:m>=a&&m<b,today:h,until:h[1],at:h[0]}}
+function fmtT(t){const[h,m]=t.split(':').map(Number);return (h%12||12)+':'+String(m).padStart(2,'0')+(h<12?' AM':' PM')}
+function slots(){ // next 7 days, 15-min steps, ≥30 min from now, within hours
+  const out=[];const now=new Date();const minT=now.getTime()+30*60000;
+  for(let d=0;d<7;d++){const day=new Date(now.getFullYear(),now.getMonth(),now.getDate()+d);const h=loc().hours[day.getDay()];if(!h)continue;
+    const[a,b]=h.map(t=>{const[x,y]=t.split(':').map(Number);return x*60+y});
+    for(let m=a;m<b-15;m+=15){const t=new Date(day);t.setHours(0,m,0,0);if(t.getTime()<minT)continue;out.push(t);}}
+  return out;}
+function renderWhen(){const sel=$('#whenSel');const oi=openInfo();const sl=slots();let h='';
+  if(oi.open)h+='<option value="asap">ASAP · ~'+(S.mode==='delivery'?'60':'30')+' min</option>';
+  let lastDay='';sl.slice(0,200).forEach(t=>{const dl=t.toDateString()===new Date().toDateString()?'Today':DAYS[t.getDay()].slice(0,3)+' '+t.getDate();h+=`<option value="${t.toISOString()}">${dl} · ${t.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}</option>`;});
+  sel.innerHTML=h||'<option value="">No times available</option>';
+  if(!oi.open)S.when=sel.value;else S.when='asap';sel.value=S.when;
+  const st=$('#storeStatus');st.classList.toggle('closed',!oi.open);
+  st.textContent=oi.open?`Open now · until ${fmtT(oi.until)}`:(oi.today?`Closed now · opens ${fmtT(oi.at)}`:'Closed today · schedule for later');}
+$('#whenSel').onchange=e=>S.when=e.target.value;
+
+/* ---------- store header ---------- */
+function renderStore(){const l=loc();$('#storeTitle').textContent='New Era Indian Cuisine — '+l.name;$('#locName').textContent=l.name;$('#storeAddr').textContent=l.address;const ph=$('#storePhone');ph.textContent=l.phone;ph.href='tel:'+l.phone.replace(/\D/g,'');
+  $$('#modeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.m===S.mode));$$('#modeSeg button')[1].hidden=!l.delivery;
+  $('#notice').innerHTML=S.mode==='delivery'?`<div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg><div>Delivery within ${l.deliveryRadius} miles of ${l.name}. $${l.deliveryMin} minimum. Allow about 60 minutes.</div></div>`:'';
+  renderWhen();}
+$('#modeSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.mode=b.dataset.m;LS.set('ne.mode',S.mode);renderStore();renderCart();};
+$('#locBtn').onclick=()=>openModal(`<div class="sc"><h2>Choose a location</h2>${DATA.locations.map(l=>`<label class="opt"><input type="radio" name="loc" value="${l.id}" ${l.id===S.loc?'checked':''}><span class="ol"><b>${esc(l.name)}</b><br><small style="color:var(--ink-2)">${esc(l.address)} · ${esc(l.phone)}</small></span></label>`).join('')}</div><div class="act"><button class="btn btn-p" id="locOk">Continue</button></div>`,s=>{$('#locOk',s).onclick=()=>{const v=$('input[name=loc]:checked',s).value;if(v!==S.loc){S.loc=v;LS.set('ne.loc',v);if(S.cart.length){S.cart=[];saveCart();toast('Location changed — cart cleared');}renderAll();}closeModal();};});
+$('#hoursLink').onclick=e=>{e.preventDefault();const l=loc();const td=new Date().getDay();openModal(`<div class="sc"><h2>${esc(l.name)} hours</h2><ul class="hours" style="list-style:none">${DAYS.map((d,i)=>`<li class="${i===td?'today':''}"><span>${d}</span><span>${l.hours[i]?fmtT(l.hours[i][0])+' – '+fmtT(l.hours[i][1]):'Closed'}</span></li>`).join('')}</ul><p style="font-size:13px;color:var(--ink-2);margin-top:12px">${esc(l.address)} · ${esc(l.phone)}</p></div>`);};
+
+/* ---------- menu ---------- */
+function renderTabs(){const cats=catsFor();$('#tabs').innerHTML=(DATA.popular.length?'<button class="tab" data-c="popular">Popular</button>':'')+cats.map(c=>`<button class="tab" data-c="${c.id}">${esc(c.label)}</button>`).join('');}
+function card(i){const min=Math.min(...i.prices.map(p=>p.price));const multi=i.prices.length>1;const img=i.img?`<img class="th" src="${i.img}" alt="" loading="lazy">`:'';
+  return `<button class="item ${i.img?'':'noimg'}" data-id="${i.id}"><div><h3>${esc(i.name)}</h3>${i.desc?`<div class="d">${esc(i.desc)}</div>`:''}<div class="p"><span class="money">${multi?'from ':''}${fmt(min)}</span>${i.spice?'<span class="chip hot">Spice level</span>':''}</div></div>${img}</button>`;}
+function renderSections(){const q=S.q.trim().toLowerCase();let h='';
+  if(!q&&DATA.popular.length){const pop=DATA.popular.map(byId).filter(i=>i&&i.loc.includes(S.loc)).slice(0,6);if(pop.length)h+=`<section class="sec" id="sec-popular"><h2>Popular right now</h2><div class="cd">What the neighbourhood orders most.</div><div class="grid">${pop.map(card).join('')}</div></section>`;}
+  catsFor().forEach(c=>{let its=itemsFor(c.id);if(q)its=its.filter(i=>(i.name+' '+i.desc).toLowerCase().includes(q));if(!its.length)return;
+    h+=`<section class="sec" id="sec-${c.id}"><h2>${esc(c.label)}</h2>${c.desc?`<div class="cd">${esc(c.desc)}</div>`:''}<div class="grid">${its.map(card).join('')}</div></section>`;});
+  $('#sections').innerHTML=h||`<div class="empty">Nothing matches “${esc(S.q)}”.</div>`;spy();}
+$('#sections').onclick=e=>{const b=e.target.closest('.item');if(b)openItem(b.dataset.id);};
+$('#tabs').onclick=e=>{const t=e.target.closest('.tab');if(!t)return;const el=$('#sec-'+t.dataset.c);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});};
+$('#chevR').onclick=()=>$('#tabs').scrollBy({left:240,behavior:'smooth'});
+$('#menuBtn').onclick=()=>openModal(`<div class="sc"><h2>Menu</h2>${catsFor().map(c=>`<button class="opt" data-c="${c.id}" style="width:100%"><span class="ol">${esc(c.label)}</span><span class="op">${c.count}</span></button>`).join('')}</div>`,s=>{s.onclick=e=>{const b=e.target.closest('[data-c]');if(!b)return;closeModal();$('#sec-'+b.dataset.c)?.scrollIntoView({behavior:'smooth'});};});
+$('#searchBtn').onclick=()=>{const r=$('#searchRow');r.classList.toggle('on');$('#searchBtn').classList.toggle('on');if(r.classList.contains('on'))$('#q').focus();else{$('#q').value='';S.q='';renderSections();}};
+$('#q').oninput=e=>{S.q=e.target.value;renderSections();};
+let spyIO;function spy(){if(spyIO)spyIO.disconnect();spyIO=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){const id=en.target.id.replace('sec-','');$$('#tabs .tab').forEach(t=>t.classList.toggle('on',t.dataset.c===id));const on=$('#tabs .tab.on');if(on)on.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});}})},{rootMargin:'-140px 0px -70% 0px'});$$('.sec').forEach(s=>spyIO.observe(s));}
+
+/* ---------- item modal ---------- */
+function openItem(id,edit){const i=byId(id);if(!i)return;const ex=edit||{};let qty=ex.qty||1;
+  const h=`${i.img?`<div class="img"><img src="${i.img}" alt=""></div>`:''}<div class="sc"><h2>${esc(i.name)}</h2>${i.desc?`<p class="desc">${esc(i.desc)}</p>`:''}
+    ${i.prices.length>1?`<div class="grp"><div class="gh"><b>Choose one</b><small>Required</small></div>${i.prices.map((p,k)=>`<label class="opt"><input type="radio" name="size" value="${k}" ${(ex.size??0)===k?'checked':''}><span class="ol">${esc(p.name)}</span><span class="op money">${fmt(p.price)}</span></label>`).join('')}</div>`:''}
+    ${i.spice?`<div class="grp"><div class="gh"><b>Spice level</b><small>Required</small></div>${SPICE.map((s,k)=>`<label class="opt"><input type="radio" name="spice" value="${s}" ${(ex.spice||'Medium')===s?'checked':''}><span class="ol">${s}</span></label>`).join('')}</div>`:''}
+    ${i.extras.length?`<div class="grp"><div class="gh"><b>Extras</b><small>Optional</small></div>${i.extras.map((e,k)=>`<label class="opt"><input type="checkbox" name="extra" value="${k}" ${(ex.extras||[]).includes(e.name)?'checked':''}><span class="ol">${esc(e.name)}</span><span class="op">${e.price?'+'+fmt(e.price):'Free'}</span></label>`).join('')}</div>`:''}
+    <div class="grp"><div class="gh"><b>Special instructions</b><small>Optional</small></div><textarea name="note" rows="2" placeholder="Allergies, less oil, no onion…">${esc(ex.note||'')}</textarea></div></div>
+    <div class="act"><div class="qty"><button data-q="-1" aria-label="Less">−</button><span id="qv">${qty}</span><button data-q="1" aria-label="More">+</button></div><button class="btn btn-p" id="addBtn">${edit?'Update':'Add to order'} · <span class="money" id="addP"></span></button></div>`;
+  openModal(h,s=>{const price=()=>{const sz=+($('input[name=size]:checked',s)?.value||0);const base=i.prices[sz].price;const exs=$$('input[name=extra]:checked',s).map(c=>i.extras[+c.value].price);return (base+exs.reduce((a,b)=>a+b,0))*qty;};
+    const upd=()=>{$('#qv',s).textContent=qty;$('#addP',s).textContent=fmt(price());};upd();
+    s.onchange=upd;s.onclick=e=>{const q=e.target.closest('[data-q]');if(q){qty=Math.max(1,Math.min(20,qty+ +q.dataset.q));upd();}};
+    $('#addBtn',s).onclick=()=>{const sz=+($('input[name=size]:checked',s)?.value||0);const spice=$('input[name=spice]:checked',s)?.value||null;const extras=$$('input[name=extra]:checked',s).map(c=>i.extras[+c.value].name);const note=$('textarea[name=note]',s).value.trim();
+      const line={key:edit?edit.key:Date.now().toString(36)+Math.random().toString(36).slice(2,6),id:i.id,name:i.name,size:sz,sizeName:i.prices.length>1?i.prices[sz].name:'',unit:i.prices[sz].price+i.extras.filter(e=>extras.includes(e.name)).reduce((a,e)=>a+e.price,0),qty,spice,extras,note,nonTax:i.nonTax,prep:i.prep};
+      if(edit){const k=S.cart.findIndex(c=>c.key===edit.key);S.cart[k]=line;}else{const same=S.cart.find(c=>c.id===line.id&&c.size===line.size&&c.spice===line.spice&&c.note===line.note&&c.extras.join()===line.extras.join());if(same)same.qty=Math.min(20,same.qty+qty);else S.cart.push(line);}
+      saveCart();closeModal();toast((edit?'Updated':'Added')+' · '+i.name);};},i.img?'':'');}
+
+/* ---------- cart ---------- */
+function totals(){const l=loc();const sub=S.cart.reduce((a,c)=>a+c.unit*c.qty,0);const taxable=S.cart.filter(c=>!c.nonTax).reduce((a,c)=>a+c.unit*c.qty,0);const tax=taxable*l.tax/100;const fee=S.mode==='delivery'?(l.zips[0]?.fee||0):0;const tip=S.tip==='custom'?(+S.tipCustom||0):sub*S.tip/100;return{sub,tax,fee,tip,total:sub+tax+fee+tip,count:S.cart.reduce((a,c)=>a+c.qty,0)};}
+function saveCart(){LS.set('ne.cart',S.cart);renderCart();}
+function renderCart(){const t=totals();const l=loc();const list=$('#cartList');
+  $('#badge').hidden=!t.count;$('#badge').textContent=t.count;$('#vbCount').textContent=t.count+(t.count===1?' item':' items');$('#vbTotal').textContent=fmt(t.total);$('#viewbar').classList.toggle('show',t.count>0&&!$('#cart').classList.contains('open'));
+  if(!S.cart.length){list.innerHTML=`<div class="emp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 6h15l-1.5 8h-12z"/><path d="M6 6 5 3H2"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>You have no items in your order.<br>Add items to get started.</div>`;$('#cartFt').innerHTML='';return;}
+  list.innerHTML=S.cart.map(c=>`<div class="ci" data-k="${c.key}"><div><div class="n">${esc(c.name)}</div><div class="m">${[c.sizeName,c.spice,...c.extras,c.note].filter(Boolean).map(esc).join(' · ')}</div></div><div class="pr money">${fmt(c.unit*c.qty)}</div><div class="q"><div class="qty"><button data-d="-1">−</button><span>${c.qty}</span><button data-d="1">+</button></div><button class="rm" data-edit>Edit</button><button class="rm" data-rm>Remove</button></div></div>`).join('');
+  const minOk=S.mode!=='delivery'||t.sub>=l.deliveryMin;
+  $('#cartFt').innerHTML=`<div class="tot"><span>Subtotal</span><span class="money">${fmt(t.sub)}</span></div><div class="tot"><span>Tax (${l.tax}%)</span><span class="money">${fmt(t.tax)}</span></div>${S.mode==='delivery'?`<div class="tot"><span>Delivery fee</span><span class="money">${t.fee?fmt(t.fee):'Free'}</span></div>`:''}
+    <div class="tot"><span>Tip</span><span class="money">${fmt(t.tip)}</span></div><div class="tipbar">${[0,10,15,20].map(p=>`<button data-tip="${p}" class="${S.tip===p?'on':''}">${p?p+'%':'None'}</button>`).join('')}<button data-tip="custom" class="${S.tip==='custom'?'on':''}">Other</button></div>
+    ${S.tip==='custom'?`<input type="number" min="0" step="0.5" id="tipCustom" value="${S.tipCustom||''}" placeholder="Tip amount $" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:8px">`:''}
+    <div class="tot big"><span>Total</span><span class="money">${fmt(t.total)}</span></div>
+    ${minOk?'':`<div class="ferr">Delivery minimum is ${fmt(l.deliveryMin)}.</div>`}
+    <button class="btn btn-p" id="checkoutBtn" ${minOk?'':'disabled'} style="margin-top:8px">Checkout · <span class="money">${fmt(t.total)}</span></button>`;}
+$('#cartList').onclick=e=>{const row=e.target.closest('.ci');if(!row)return;const c=S.cart.find(x=>x.key===row.dataset.k);const d=e.target.closest('[data-d]');
+  if(d){c.qty=Math.max(0,Math.min(20,c.qty+ +d.dataset.d));if(!c.qty)S.cart=S.cart.filter(x=>x!==c);saveCart();}
+  else if(e.target.closest('[data-rm]')){S.cart=S.cart.filter(x=>x!==c);saveCart();}
+  else if(e.target.closest('[data-edit]')){openItem(c.id,c);}};
+$('#cartFt').onclick=e=>{const t=e.target.closest('[data-tip]');if(t){S.tip=t.dataset.tip==='custom'?'custom':+t.dataset.tip;LS.set('ne.tip',S.tip);renderCart();if(S.tip==='custom')$('#tipCustom')?.focus();}if(e.target.id==='checkoutBtn')openCheckout();};
+$('#cartFt').oninput=e=>{if(e.target.id==='tipCustom'){S.tipCustom=e.target.value;const t=totals();$('.tot.big .money',$('#cartFt')).textContent=fmt(t.total);$('#checkoutBtn .money').textContent=fmt(t.total);$('.tot:nth-child(3) .money, .tot:nth-child(4) .money');}};
+const openCart=()=>{$('#cart').classList.add('open');$('#scrim').classList.add('on');$('#viewbar').classList.remove('show');};
+const closeCart=()=>{$('#cart').classList.remove('open');$('#scrim').classList.remove('on');renderCart();};
+$('#cartBtn').onclick=openCart;$('#viewOrder').onclick=openCart;$('#cartX').onclick=closeCart;$('#scrim').onclick=closeCart;
+
+/* ---------- checkout ---------- */
+function openCheckout(){const l=loc();const t=totals();const saved=LS.get('ne.me',{});
+  const whenLabel=S.when==='asap'?'ASAP':new Date(S.when).toLocaleString([],{weekday:'short',hour:'numeric',minute:'2-digit'});
+  const h=`<div class="sc"><h2>Checkout</h2><p class="desc">${S.mode==='delivery'?'Delivery':'Pickup'} from <b>${esc(l.name)}</b> · ${whenLabel} <a href="#" id="chgWhen">change</a></p>
+    <form class="f" id="coForm" novalidate>
+      <div><label>First name</label><input type="text" name="first" value="${esc(saved.first||'')}" autocomplete="given-name" required></div>
+      <div><label>Last name</label><input type="text" name="last" value="${esc(saved.last||'')}" autocomplete="family-name" required></div>
+      <div><label>Mobile phone</label><input type="tel" name="phone" value="${esc(saved.phone||'')}" autocomplete="tel" inputmode="tel" required></div>
+      <div><label>Email (for your receipt)</label><input type="email" name="email" value="${esc(saved.email||'')}" autocomplete="email"></div>
+      ${S.mode==='delivery'?`<div class="full"><label>Street address</label><input type="text" name="addr" value="${esc(saved.addr||'')}" autocomplete="street-address" required></div><div><label>Apt / unit</label><input type="text" name="apt" value="${esc(saved.apt||'')}"></div><div><label>ZIP</label><input type="text" name="zip" value="${esc(saved.zip||'')}" inputmode="numeric" autocomplete="postal-code" required></div>`:''}
+      <div class="full"><label>Order notes</label><input type="text" name="onote" placeholder="Gate code, call on arrival, utensils…"></div>
+      <div class="full"><label>Payment</label><div class="pay"><label class="opt"><input type="radio" name="pay" value="store" checked><span class="ol"><b>Pay ${S.mode==='delivery'?'at the door':'at pickup'}</b><br><small style="color:var(--ink-2)">Cash or card when you collect</small></span></label><label class="opt dis"><input type="radio" name="pay" value="card" disabled><span class="ol"><b>Pay now by card</b><br><small style="color:var(--ink-2)">Turns on once the card processor is connected</small></span></label></div></div>
+      <div class="ferr full" id="coErr"></div>
+    </form>
+    <div class="sum"><b style="font-size:14px">${t.count} item${t.count===1?'':'s'}</b>${S.cart.map(c=>`<div class="ci"><div><div class="n">${c.qty} × ${esc(c.name)}</div><div class="m">${[c.sizeName,c.spice,...c.extras].filter(Boolean).map(esc).join(' · ')}</div></div><div class="pr money">${fmt(c.unit*c.qty)}</div></div>`).join('')}
+      <div class="tot" style="margin-top:8px"><span>Subtotal</span><span class="money">${fmt(t.sub)}</span></div><div class="tot"><span>Tax</span><span class="money">${fmt(t.tax)}</span></div>${S.mode==='delivery'?`<div class="tot"><span>Delivery</span><span class="money">${t.fee?fmt(t.fee):'Free'}</span></div>`:''}<div class="tot"><span>Tip</span><span class="money">${fmt(t.tip)}</span></div><div class="tot big"><span>Total</span><span class="money">${fmt(t.total)}</span></div></div></div>
+    <div class="act"><button class="btn btn-o" id="coBack" style="flex:0 0 auto;width:auto">Back</button><button class="btn btn-p" id="placeBtn">Place order · <span class="money">${fmt(t.total)}</span></button></div>`;
+  openModal(h,s=>{s.querySelector('.sheet')?.classList.add('wide');$('#coBack',s).onclick=closeModal;$('#chgWhen',s).onclick=e=>{e.preventDefault();closeModal();closeCart();$('#whenSel').focus();};
+    $('#placeBtn',s).onclick=async()=>{const f=$('#coForm',s);const v=n=>(f.elements[n]?.value||'').trim();const errs=[];$$('input',f).forEach(i=>i.classList.remove('err'));
+      const need=(n,ok,msg)=>{if(!ok){errs.push(msg);f.elements[n]?.classList.add('err');}};
+      need('first',v('first'),'Enter your first name');need('last',v('last'),'Enter your last name');need('phone',v('phone').replace(/\D/g,'').length>=10,'Enter a valid mobile number');
+      if(v('email'))need('email',/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v('email')),'That email doesn’t look right');
+      if(S.mode==='delivery'){need('addr',v('addr'),'Enter a delivery address');need('zip',/^\d{5}$/.test(v('zip')),'Enter a 5-digit ZIP');}
+      if(!S.cart.length)errs.push('Your cart is empty');
+      const oi=openInfo();if(S.when==='asap'&&!oi.open)errs.push('We’re closed right now — pick a time');
+      if(errs.length){$('#coErr',s).textContent=errs[0];return;}
+      const me={first:v('first'),last:v('last'),phone:v('phone'),email:v('email'),addr:v('addr'),apt:v('apt'),zip:v('zip')};LS.set('ne.me',me);
+      const tt=totals();const prep=Math.max(20,...S.cart.map(c=>c.prep||20))+(S.mode==='delivery'?30:0);
+      const order={id:'NE-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,5).toUpperCase(),createdAt:new Date().toISOString(),status:'new',locationId:l.id,location:l.name,mode:S.mode,when:S.when,
+        customer:{name:me.first+' '+me.last,phone:me.phone,email:me.email},delivery:S.mode==='delivery'?{address:me.addr,apt:me.apt,zip:me.zip}:null,notes:v('onote'),payment:'pay_'+(S.mode==='delivery'?'at_door':'at_pickup'),
+        lines:S.cart.map(c=>({name:c.name,size:c.sizeName,qty:c.qty,unit:c.unit,spice:c.spice,extras:c.extras,note:c.note})),subtotal:+tt.sub.toFixed(2),tax:+tt.tax.toFixed(2),fee:+tt.fee.toFixed(2),tip:+tt.tip.toFixed(2),total:+tt.total.toFixed(2),estMinutes:prep};
+      const b=$('#placeBtn',s);b.disabled=true;b.textContent='Placing order…';
+      try{await Store.save(order);}catch(e){b.disabled=false;b.textContent='Place order';$('#coErr',s).textContent='Could not place the order. Please try again or call '+l.phone;return;}
+      S.cart=[];saveCart();closeModal();closeCart();showDone(order);};});}
+
+/* ---------- order store (shared when available, local otherwise) ---------- */
+const Store={mode:'local',db:null,
+  async init(){try{if(window.claude&&claude.use){const db=await Promise.race([claude.use('db'),new Promise(r=>setTimeout(()=>r(null),4000))]);if(db){this.db=db;this.mode='shared';}}}catch(e){}},
+  async save(o){if(this.db){await this.db.doc('orders/'+o.id).set(o);}const a=LS.get('ne.orders',[]);a.unshift(o);LS.set('ne.orders',a.slice(0,200));try{localStorage.setItem('ne.ping',String(Date.now()))}catch(e){}},
+  async update(id,patch){if(this.db){await this.db.doc('orders/'+id).update(patch);}const a=LS.get('ne.orders',[]);const o=a.find(x=>x.id===id);if(o){Object.assign(o,patch);LS.set('ne.orders',a);}try{localStorage.setItem('ne.ping',String(Date.now()))}catch(e){}},
+  subscribe(cb){const local=()=>cb(LS.get('ne.orders',[]));
+    if(this.db){try{const q=this.db.collection('orders').orderBy('createdAt','desc').limit(100);const un=q.onSnapshot(snap=>{const docs=snap&&snap.docs?snap.docs.map(d=>typeof d.data==='function'?d.data():d):(Array.isArray(snap)?snap:[]);cb(docs);});return un;}catch(e){local();}}
+    local();const h=e=>{if(e.key==='ne.orders'||e.key==='ne.ping')local();};addEventListener('storage',h);return()=>removeEventListener('storage',h);}};
+await Store.init();
+
+/* ---------- confirmation ---------- */
+function showDone(o){const l=loc();const v=$('#viewDone');v.hidden=false;$('#viewMenu').hidden=true;scrollTo(0,0);
+  const when=o.when==='asap'?`in about ${o.estMinutes} minutes`:'at '+new Date(o.when).toLocaleString([],{weekday:'short',hour:'numeric',minute:'2-digit'});
+  v.innerHTML=`<div class="ok-card"><div class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 5 5L20 7"/></svg></div><h2>Thanks, ${esc(o.customer.name.split(' ')[0])}!</h2><div class="num">Order <b>${o.id}</b> · ${o.mode==='delivery'?'Delivery':'Pickup'} ${when}</div>
+    <div class="msg">${esc(o.mode==='delivery'?l.deliveryMsg:l.pickupMsg)}</div>
+    <div class="sum" style="text-align:left">${o.lines.map(c=>`<div class="ci"><div><div class="n">${c.qty} × ${esc(c.name)}</div><div class="m">${[c.size,c.spice,...c.extras,c.note].filter(Boolean).map(esc).join(' · ')}</div></div><div class="pr money">${fmt(c.unit*c.qty)}</div></div>`).join('')}<div class="tot big"><span>Total (${esc(o.payment.replace('pay_','pay ').replace(/_/g,' '))})</span><span class="money">${fmt(o.total)}</span></div></div>
+    <p style="font-size:13px;color:var(--ink-2);margin:14px 0">${esc(l.name)} · ${esc(l.address)} · <a href="tel:${l.phone.replace(/\D/g,'')}">${esc(l.phone)}</a></p>
+    <button class="btn btn-p" id="again">Order something else</button></div>`;
+  $('#again').onclick=()=>{v.hidden=true;$('#viewMenu').hidden=false;location.hash='';};}
+
+/* ---------- staff board (#orders) ---------- */
+let unsub=null,boardFilter='active';
+function showBoard(){$('#viewMenu').hidden=true;$('#viewDone').hidden=true;const v=$('#viewBoard');v.hidden=false;scrollTo(0,0);
+  v.innerHTML=`<h2>Orders board</h2><span class="pill-mode">${Store.mode==='shared'?'Shared store · live for everyone signed in':'This device only · connect a backend for live shared orders'}</span><div class="filters">${['active','new','preparing','ready','done','all'].map(f=>`<button data-f="${f}" class="${boardFilter===f?'on':''}">${f[0].toUpperCase()+f.slice(1)}</button>`).join('')}</div><div id="ordList"><div class="empty">Loading…</div></div><p style="margin-top:16px"><a href="#">← Back to menu</a></p>`;
+  $('.filters',v).onclick=e=>{const b=e.target.closest('[data-f]');if(b){boardFilter=b.dataset.f;$$('.filters button',v).forEach(x=>x.classList.toggle('on',x===b));renderBoard(lastOrders);}};
+  if(unsub)unsub();unsub=Store.subscribe(renderBoard);}
+let lastOrders=[];
+function renderBoard(orders){lastOrders=orders||[];const el=$('#ordList');if(!el)return;let os=[...lastOrders].sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+  if(boardFilter==='active')os=os.filter(o=>o.status!=='done');else if(boardFilter!=='all')os=os.filter(o=>o.status===boardFilter);
+  if(!os.length){el.innerHTML='<div class="empty">No orders here yet.</div>';return;}
+  const NEXT={new:'preparing',preparing:'ready',ready:'done'};
+  el.innerHTML=os.map(o=>`<div class="ord" data-id="${esc(o.id)}"><div><div class="h">${esc(o.id)} · ${esc(o.customer?.name||'')}</div><div class="s">${esc(o.location||'')} · ${o.mode==='delivery'?'Delivery':'Pickup'} · ${o.when==='asap'?'ASAP':new Date(o.when).toLocaleString([],{weekday:'short',hour:'numeric',minute:'2-digit'})} · placed ${new Date(o.createdAt).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}${o.customer?.phone?' · '+esc(o.customer.phone):''}</div></div><div><span class="st ${esc(o.status)}">${esc(o.status)}</span><div class="money" style="font-weight:700;text-align:right;margin-top:6px">${fmt(o.total||0)}</div></div>
+    <div class="lines">${(o.lines||[]).map(c=>`<div><b>${c.qty}×</b> ${esc(c.name)}${c.size?' ('+esc(c.size)+')':''}${c.spice?' · '+esc(c.spice):''}${c.extras?.length?' · '+c.extras.map(esc).join(', '):''}${c.note?' · <i>'+esc(c.note)+'</i>':''}</div>`).join('')}${o.delivery?`<div style="color:var(--ink-2)">→ ${esc(o.delivery.address)} ${esc(o.delivery.apt||'')} ${esc(o.delivery.zip)}</div>`:''}${o.notes?`<div style="color:var(--ink-2)">Note: ${esc(o.notes)}</div>`:''}</div>
+    <div class="acts">${NEXT[o.status]?`<button data-st="${NEXT[o.status]}">Mark ${NEXT[o.status]}</button>`:''}${o.status!=='new'?`<button data-st="new">Reset</button>`:''}</div></div>`).join('');}
+$('#viewBoard').onclick=async e=>{const b=e.target.closest('[data-st]');if(!b)return;const id=b.closest('.ord').dataset.id;try{await Store.update(id,{status:b.dataset.st});if(Store.mode==='local')renderBoard(LS.get('ne.orders',[]));}catch(err){toast('Could not update');}};
+
+/* ---------- routing ---------- */
+function route(){const h=location.hash.replace('#','');if(h==='orders'){showBoard();}else{if(unsub){unsub();unsub=null;}$('#viewBoard').hidden=true;if($('#viewDone').hidden)$('#viewMenu').hidden=false;}}
+addEventListener('hashchange',route);
+
+/* ---------- modal + toast helpers ---------- */
+function openModal(html,init){const m=$('#modal'),s=$('#sheet');s.className='sheet';s.onchange=null;s.onclick=null;s.innerHTML=`<button class="x" data-close aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button>`+html;m.classList.add('on');document.body.style.overflow='hidden';if(init)init(s);}
+function closeModal(){$('#modal').classList.remove('on');document.body.style.overflow='';}
+$('#modal').addEventListener('click',e=>{if(e.target.closest('[data-close]'))closeModal();});
+addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeCart();}});
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1800);}
+
+function renderAll(){renderStore();renderTabs();renderSections();renderCart();}
+renderAll();route();
+setInterval(()=>{if(!$('#viewMenu').hidden)renderWhen();},60000);
+window.__NE={S,Store,totals,DATA};
+})();
+</script>
+</body>
+</html>
