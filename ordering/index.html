@@ -85,9 +85,12 @@ a{color:var(--brand);text-decoration:none}
 .tabs .chev{width:34px;height:38px;display:grid;place-items:center;color:var(--ink-2);flex:none}
 .search-row{display:none;margin-top:8px}
 .search-row.on{display:flex}
-.search-row input{flex:1;border:1px solid var(--line);border-radius:999px;padding:11px 16px;background:#fff;font-size:15px;outline:0}
+.search-row input{flex:1;border:1px solid var(--line);border-radius:999px;padding:11px 16px;background:#fff;font-size:16px;outline:0}
 .search-row input:focus{border-color:var(--brand)}
 
+/* iOS Safari zooms into any field under 16px — keep every field at 16px */
+input,select,textarea{font-size:16px}
+.when select{font-size:16px}
 /* ===== notices ===== */
 .notice{display:flex;gap:10px;align-items:flex-start;background:#FFF6E0;border:1px solid #F3DFA2;border-radius:var(--r2);padding:12px 14px;font-size:14px;margin-bottom:14px}
 .notice svg{width:18px;height:18px;flex:none;color:#9A6B00;margin-top:1px}
@@ -176,7 +179,7 @@ a{color:var(--brand);text-decoration:none}
 .opt input{accent-color:var(--brand);width:18px;height:18px}
 .opt .ol{flex:1;font-size:14.5px}
 .opt .op{font-size:14px;font-weight:600;color:var(--ink-2)}
-.sheet textarea,.sheet input[type=text],.sheet input[type=tel],.sheet input[type=email],.sheet select{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-size:15px;outline:0;background:#fff}
+.sheet textarea,.sheet input[type=text],.sheet input[type=tel],.sheet input[type=email],.sheet select{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-size:16px;outline:0;background:#fff}
 .sheet textarea:focus,.sheet input:focus,.sheet select:focus{border-color:var(--brand)}
 .sheet .act{display:flex;gap:10px;align-items:center;padding:12px 20px calc(14px + var(--sab));border-top:1px solid var(--line-2);background:#fff}
 .sheet .act .btn{flex:1}
@@ -347,7 +350,7 @@ $('#sections').onclick=e=>{const b=e.target.closest('.item');if(b)openItem(b.dat
 $('#tabs').onclick=e=>{const t=e.target.closest('.tab');if(!t)return;const el=$('#sec-'+t.dataset.c);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});};
 $('#chevR').onclick=()=>$('#tabs').scrollBy({left:240,behavior:'smooth'});
 $('#menuBtn').onclick=()=>openModal(`<div class="sc"><h2>Menu</h2>${catsFor().map(c=>`<button class="opt" data-c="${c.id}" style="width:100%"><span class="ol">${esc(c.label)}</span><span class="op">${c.count}</span></button>`).join('')}</div>`,s=>{s.onclick=e=>{const b=e.target.closest('[data-c]');if(!b)return;closeModal();$('#sec-'+b.dataset.c)?.scrollIntoView({behavior:'smooth'});};});
-$('#searchBtn').onclick=()=>{const r=$('#searchRow');r.classList.toggle('on');$('#searchBtn').classList.toggle('on');if(r.classList.contains('on'))$('#q').focus();else{$('#q').value='';S.q='';renderSections();}};
+$('#searchBtn').onclick=()=>{const r=$('#searchRow');r.classList.toggle('on');$('#searchBtn').classList.toggle('on');if(r.classList.contains('on'))$('#q').focus({preventScroll:true});else{$('#q').value='';S.q='';renderSections();}};
 $('#q').oninput=e=>{S.q=e.target.value;renderSections();};
 let spyIO;function spy(){if(spyIO)spyIO.disconnect();spyIO=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){const id=en.target.id.replace('sec-','');$$('#tabs .tab').forEach(t=>t.classList.toggle('on',t.dataset.c===id));const on=$('#tabs .tab.on');if(on)on.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});}})},{rootMargin:'-140px 0px -70% 0px'});$$('.sec').forEach(s=>spyIO.observe(s));}
 
@@ -377,7 +380,7 @@ function renderCart(){const t=totals();const l=loc();const list=$('#cartList');
   const minOk=S.mode!=='delivery'||t.sub>=l.deliveryMin;
   $('#cartFt').innerHTML=`<div class="tot"><span>Subtotal</span><span class="money">${fmt(t.sub)}</span></div><div class="tot"><span>Tax (${l.tax}%)</span><span class="money">${fmt(t.tax)}</span></div>${S.mode==='delivery'?`<div class="tot"><span>Delivery fee</span><span class="money">${t.fee?fmt(t.fee):'Free'}</span></div>`:''}
     <div class="tot"><span>Tip</span><span class="money">${fmt(t.tip)}</span></div><div class="tipbar">${[0,10,15,20].map(p=>`<button data-tip="${p}" class="${S.tip===p?'on':''}">${p?p+'%':'None'}</button>`).join('')}<button data-tip="custom" class="${S.tip==='custom'?'on':''}">Other</button></div>
-    ${S.tip==='custom'?`<input type="number" min="0" step="0.5" id="tipCustom" value="${S.tipCustom||''}" placeholder="Tip amount $" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:8px">`:''}
+    ${S.tip==='custom'?`<input type="number" min="0" step="0.5" id="tipCustom" value="${S.tipCustom||''}" placeholder="Tip amount $" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:8px;font-size:16px">`:''}
     <div class="tot big"><span>Total</span><span class="money">${fmt(t.total)}</span></div>
     ${minOk?'':`<div class="ferr">Delivery minimum is ${fmt(l.deliveryMin)}.</div>`}
     <button class="btn btn-p" id="checkoutBtn" ${minOk?'':'disabled'} style="margin-top:8px">Checkout · <span class="money">${fmt(t.total)}</span></button>`;}
