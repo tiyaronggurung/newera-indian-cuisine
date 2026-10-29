@@ -271,7 +271,7 @@ footer .right{text-align:right}
       <a href="#menu">Menu</a><a href="#kitchen">The kitchen</a><a href="#catering">Catering</a><a href="#story">Story</a><a href="#visit">Visit</a>
     </nav>
     <div class="nav-cta">
-      <a class="btn btn-cream" href="https://claude.ai/artifact/VeBro13etzDYNejebBe25o" target="_blank" rel="noopener">Order online</a>
+      <a class="btn btn-cream" href="../ordering/" target="_blank" rel="noopener">Order online</a>
       <button class="burger" id="burger" aria-label="Menu"><span></span></button>
     </div>
   </div>
@@ -279,7 +279,7 @@ footer .right{text-align:right}
 <div class="sheet-nav" id="sheetNav">
   <button class="x" id="closeNav">Close</button>
   <a href="#menu">Menu</a><a href="#kitchen">The kitchen</a><a href="#catering">Catering</a><a href="#story">Story</a><a href="#visit">Visit</a>
-  <a class="btn btn-accent" href="https://claude.ai/artifact/VeBro13etzDYNejebBe25o" target="_blank" rel="noopener">Order online</a>
+  <a class="btn btn-accent" href="../ordering/" target="_blank" rel="noopener">Order online</a>
 </div>
 
 <main id="top">
@@ -291,7 +291,7 @@ footer .right{text-align:right}
     <h1>Spice. Simmer.<br><span class="second">Savor.</span></h1>
     <p class="lead">Home-style Indian cooking made with heart and heritage. Two neighbourhood rooms, one kitchen, and a tandoor that never really cools down.</p>
     <div class="hero-actions">
-      <a class="btn btn-accent" href="https://claude.ai/artifact/VeBro13etzDYNejebBe25o" target="_blank" rel="noopener">Order online</a>
+      <a class="btn btn-accent" href="../ordering/" target="_blank" rel="noopener">Order online</a>
       <a class="btn btn-ghost" href="#menu">See the menu</a>
     </div>
     <div class="hero-foot"><span class="dot" id="openDot"></span><span id="openText">Open today 11:00–21:00</span><span>&middot;</span><span>219 E Willow Grove Ave &amp; 1005 Germantown Pike</span></div>
@@ -330,7 +330,7 @@ footer .right{text-align:right}
 <section class="rules wrap rv">
   <div class="cards3">
     <div class="card"><span class="num">01</span><h3>Dine in</h3><p>Two calm, comfortable rooms for a casual lunch or a long dinner. Walk in any day we are open; larger parties, give us a call.</p><span class="spacer"></span><a class="link" href="#visit">Find us <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 13 13 3M6 3h7v7"/></svg></a></div>
-    <div class="card"><span class="num">02</span><h3>Take out &amp; delivery</h3><p>Order online and pick up hot, or have it delivered within three miles of either location.</p><span class="spacer"></span><a class="link" href="https://claude.ai/artifact/VeBro13etzDYNejebBe25o" target="_blank" rel="noopener">Order online <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 13 13 3M6 3h7v7"/></svg></a></div>
+    <div class="card"><span class="num">02</span><h3>Take out &amp; delivery</h3><p>Order online and pick up hot, or have it delivered within three miles of either location.</p><span class="spacer"></span><a class="link" href="../ordering/" target="_blank" rel="noopener">Order online <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 13 13 3M6 3h7v7"/></svg></a></div>
     <div class="card"><span class="num">03</span><h3>Catering</h3><p>Party trays of any size, or a full per-person package for events from twenty guests up. We cook, you host.</p><span class="spacer"></span><a class="link" href="#catering">See packages <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 13 13 3M6 3h7v7"/></svg></a></div>
   </div>
 </section>
@@ -340,7 +340,7 @@ footer .right{text-align:right}
   <div class="sheet rv">
     <div class="menu-head">
       <div><div class="eyebrow">The menu</div><h2>Everything, for the table.</h2></div>
-      <a class="btn btn-accent" href="https://claude.ai/artifact/VeBro13etzDYNejebBe25o" target="_blank" rel="noopener">Order online</a>
+      <a class="btn btn-accent" href="../ordering/" target="_blank" rel="noopener">Order online</a>
     </div>
     <div class="tabs" id="tabs" role="tablist"></div>
     <p class="cat-note" id="catNote"></p>
@@ -492,7 +492,7 @@ footer .right{text-align:right}
 <!-- ============ CTA ============ -->
 <section class="cta wrap rv">
   <h2>Come hungry.<br><span class="second">Bring everyone.</span></h2>
-  <a class="btn btn-accent" href="https://claude.ai/artifact/VeBro13etzDYNejebBe25o" target="_blank" rel="noopener">Order online</a>
+  <a class="btn btn-accent" href="../ordering/" target="_blank" rel="noopener">Order online</a>
 </section>
 
 </main>
@@ -576,6 +576,10 @@ footer .right{text-align:right}
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
   $$('.rv').forEach(el=>io.observe(el));
 })();
+</script>
+<script>
+/* cross-link: relative on a normal host, artifact URL when previewed on claude.ai */
+if(/claude\.(ai|com)$/.test(location.hostname)){document.querySelectorAll('a[href="../ordering/"]').forEach(a=>a.href='https://claude.ai/artifact/VeBro13etzDYNejebBe25o');}
 </script>
 </body>
 </html>

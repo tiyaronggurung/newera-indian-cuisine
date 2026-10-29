@@ -283,7 +283,7 @@ footer{max-width:1240px;margin:0 auto;padding:10px 16px 40px;font-size:12.5px;co
   </aside>
 </div>
 <div class="viewbar" id="viewbar"><button class="btn btn-p" id="viewOrder"><span id="vbCount">0 items</span><span>View order</span><span class="money" id="vbTotal">$0.00</span></button></div>
-<footer><span>© <span id="yr"></span> New Era Indian Cuisine</span><span>Chestnut Hill: 215-967-1159</span><span>Plymouth Meeting: 484-235-8175</span><span><a href="https://claude.ai/artifact/PR7CdNihZRJXBetbhAp14T">Main site</a></span><span><a href="#orders" id="staffLink">Staff</a></span></footer>
+<footer><span>© <span id="yr"></span> New Era Indian Cuisine</span><span>Chestnut Hill: 215-967-1159</span><span>Plymouth Meeting: 484-235-8175</span><span><a href="../website/">Main site</a></span><span><a href="#orders" id="staffLink">Staff</a></span></footer>
 </div>
 
 <div id="viewDone" class="page" hidden></div>
@@ -519,6 +519,7 @@ let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on
 function renderAll(){renderStore();renderTabs();renderSections();renderCart();}
 renderAll();route();
 setInterval(()=>{if(!$('#viewMenu').hidden)renderWhen();},60000);
+if(/claude\.(ai|com)$/.test(location.hostname)){const a=document.querySelector('a[href="../website/"]');if(a)a.href='https://claude.ai/artifact/PR7CdNihZRJXBetbhAp14T';}
 addEventListener('error',()=>toast('Something went wrong — your cart is safe'));addEventListener('unhandledrejection',e=>{e.preventDefault();toast('Something went wrong — your cart is safe');});
 window.__NE={S,Store,totals,DATA};
 })();
