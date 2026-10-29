@@ -119,6 +119,8 @@ input,select,textarea{font-size:16px}
 .item .p{margin-top:8px;font-weight:600;font-size:14.5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .item .p .chip{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;background:var(--brand-lt);color:var(--brand);padding:3px 7px;border-radius:999px}
 .item .p .chip.hot{background:#FDECEA;color:#B23B2E}
+.item .p .chip.out{background:#EEE;color:#666}
+.item.soldout{opacity:.6}.item.soldout:hover{transform:none}
 .item .th{width:96px;height:96px;border-radius:10px;object-fit:cover;background:#eee}
 .empty{padding:40px;text-align:center;color:var(--ink-2)}
 
@@ -301,8 +303,14 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}
 $('#yr').textContent=new Date().getFullYear();
 
 /* ---------- data ---------- */
-let DATA;
-try{DATA=await (await fetch('menu.json')).json();}catch(e){$('#sections').innerHTML='<div class="empty">Menu could not be loaded. Please refresh.</div>';return;}
+let DATA;let menuStale=false;
+const fetchT=(url,ms,opt)=>{const c=new AbortController();const t=setTimeout(()=>c.abort(),ms);return fetch(url,Object.assign({signal:c.signal},opt||{})).finally(()=>clearTimeout(t));};
+async function loadMenu(){const cached=LS.get('ne.menu',null);
+  try{const fresh=await (await fetchT('menu.json?t='+Date.now(),8000,{cache:'no-store'})).json();if(fresh&&fresh.items){LS.set('ne.menu',fresh);return fresh;}}catch(e){}
+  if(cached&&cached.items){menuStale=true;return cached;}return null;}
+DATA=await loadMenu();
+if(!DATA){$('#sections').innerHTML='<div class="empty">The menu could not be loaded. Please check your connection and refresh, or call 215-967-1159 to order.</div>';return;}
+DATA.ordering=DATA.ordering||{};
 const CATNAME={'"Dinner special" Limited Time offer !!!':'Dinner Special · limited time','New Era Daily special!!':'Daily Specials','Go Extra Large (Family size)':'Family Size (32 oz)','veg. lunch Combo':'Veg Lunch Combos','Non- veg Lunch combo':'Non-Veg Lunch Combos','Tikka sauce only':'Tikka Sauce','New Era Fry Rice':'Fried Rice','Vegetarian Dishes':'Vegetarian','Chicken Dishes':'Chicken','Lamb Dishes':'Lamb','Paneer Dishes':'Paneer'};
 DATA.categories.forEach(c=>c.label=CATNAME[c.name]||c.name);
 const SPICE=['Mild','Medium','Hot','Extra hot'];
@@ -336,7 +344,9 @@ $('#whenSel').onchange=e=>S.when=e.target.value;
 /* ---------- store header ---------- */
 function renderStore(){const l=loc();$('#storeTitle').textContent='New Era Indian Cuisine — '+l.name;$('#locName').textContent=l.name;$('#storeAddr').textContent=l.address;const ph=$('#storePhone');ph.textContent=l.phone;ph.href='tel:'+l.phone.replace(/\D/g,'');
   $$('#modeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.m===S.mode));$$('#modeSeg button')[1].hidden=!l.delivery;
-  $('#notice').innerHTML=S.mode==='delivery'?`<div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg><div>Delivery within ${l.deliveryRadius} miles of ${l.name}. $${l.deliveryMin} minimum. Allow about 60 minutes.</div></div>`:'';
+  const warn=(t)=>`<div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg><div>${t}</div></div>`;
+  let pre='';if(DATA.ordering.paused)pre+=warn(esc(DATA.ordering.pausedMessage||'Online ordering is paused right now. Please call '+l.phone+' to order.'));if(menuStale)pre+=warn('You’re seeing our saved menu — prices will be confirmed when you order.');
+  $('#notice').innerHTML=pre+(S.mode==='delivery'?`<div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg><div>Delivery within ${l.deliveryRadius} miles of ${l.name}. $${l.deliveryMin} minimum. Allow about 60 minutes.</div></div>`:'');
   renderWhen();}
 $('#modeSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.mode=b.dataset.m;LS.set('ne.mode',S.mode);renderStore();renderCart();};
 $('#locBtn').onclick=()=>openModal(`<div class="sc"><h2>Choose a location</h2>${DATA.locations.map(l=>`<label class="opt"><input type="radio" name="loc" value="${l.id}" ${l.id===S.loc?'checked':''}><span class="ol"><b>${esc(l.name)}</b><br><small style="color:var(--ink-2)">${esc(l.address)} · ${esc(l.phone)}</small></span></label>`).join('')}</div><div class="act"><button class="btn btn-p" id="locOk">Continue</button></div>`,s=>{$('#locOk',s).onclick=()=>{const v=$('input[name=loc]:checked',s).value;if(v!==S.loc){S.loc=v;LS.set('ne.loc',v);S.cat='all';LS.set('ne.cat','all');if(S.cart.length){S.cart=[];saveCart();toast('Location changed — cart cleared');}renderAll();}closeModal();};});
@@ -345,8 +355,9 @@ $('#hoursLink').onclick=e=>{e.preventDefault();const l=loc();const td=new Date()
 /* ---------- menu ---------- */
 function renderTabs(){const cats=catsFor();$('#tabs').innerHTML='<button class="tab" data-c="all">All</button>'+(DATA.popular.length?'<button class="tab" data-c="popular">Popular</button>':'')+cats.map(c=>`<button class="tab" data-c="${c.id}">${esc(c.label)}</button>`).join('');markTab();}
 function markTab(){$$('#tabs .tab').forEach(t=>t.classList.toggle('on',t.dataset.c===S.cat));const on=$('#tabs .tab.on');if(on)on.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});}
-function card(i){const min=Math.min(...i.prices.map(p=>p.price));const multi=i.prices.length>1;const img=i.img?`<img class="th" src="${i.img}" alt="" loading="lazy">`:'';
-  return `<button class="item ${i.img?'':'noimg'}" data-id="${i.id}"><div><h3>${esc(i.name)}</h3>${i.desc?`<div class="d">${esc(i.desc)}</div>`:''}<div class="p"><span class="money">${multi?'from ':''}${fmt(min)}</span>${i.spice?'<span class="chip hot">Spice level</span>':''}</div></div>${img}</button>`;}
+const soldOut=i=>i.available===false;
+function card(i){const min=Math.min(...i.prices.map(p=>p.price));const multi=i.prices.length>1;const img=i.img?`<img class="th" src="${i.img}" alt="" loading="lazy" decoding="async">`:'';const so=soldOut(i);
+  return `<button class="item ${i.img?'':'noimg'} ${so?'soldout':''}" data-id="${i.id}" ${so?'aria-disabled="true"':''}><div><h3>${esc(i.name)}</h3>${i.desc?`<div class="d">${esc(i.desc)}</div>`:''}<div class="p"><span class="money">${multi?'from ':''}${fmt(min)}</span>${so?'<span class="chip out">Sold out</span>':i.spice?'<span class="chip hot">Spice level</span>':''}</div></div>${img}</button>`;}
 function secHTML(c,its){return `<section class="sec" id="sec-${c.id}"><h2>${esc(c.label)}</h2>${c.desc?`<div class="cd">${esc(c.desc)}</div>`:''}<div class="grid">${its.map(card).join('')}</div></section>`;}
 function popHTML(){const pop=DATA.popular.map(byId).filter(i=>i&&i.loc.includes(S.loc)).slice(0,6);return pop.length?`<section class="sec" id="sec-popular"><h2>Popular right now</h2><div class="cd">What the neighbourhood orders most.</div><div class="grid">${pop.map(card).join('')}</div></section>`:'';}
 function skeletonHTML(label,n){return `<section class="sec skel" id="sec-loading" aria-busy="true"><h2>${esc(label)}</h2><div class="cd"><span class="sk sk-t" style="width:220px"></span></div><div class="grid">${Array.from({length:n},()=>`<div class="item sk-card"><div><span class="sk sk-t" style="width:60%"></span><span class="sk sk-t" style="width:90%"></span><span class="sk sk-t" style="width:40%"></span></div><span class="sk sk-img"></span></div>`).join('')}</div></section>`;}
@@ -374,7 +385,7 @@ $('#searchBtn').onclick=()=>{const r=$('#searchRow');r.classList.toggle('on');$(
 $('#q').oninput=e=>{S.q=e.target.value;renderSections();};
 
 /* ---------- item modal ---------- */
-function openItem(id,edit){const i=byId(id);if(!i)return;const ex=edit||{};let qty=ex.qty||1;
+function openItem(id,edit){const i=byId(id);if(!i)return;if(soldOut(i)){toast(i.name+' is sold out right now');return;}if(DATA.ordering.paused){toast('Online ordering is paused right now');return;}const ex=edit||{};let qty=ex.qty||1;
   const h=`${i.img?`<div class="img"><img src="${i.img}" alt=""></div>`:''}<div class="sc"><h2>${esc(i.name)}</h2>${i.desc?`<p class="desc">${esc(i.desc)}</p>`:''}
     ${i.prices.length>1?`<div class="grp"><div class="gh"><b>Choose one</b><small>Required</small></div>${i.prices.map((p,k)=>`<label class="opt"><input type="radio" name="size" value="${k}" ${(ex.size??0)===k?'checked':''}><span class="ol">${esc(p.name)}</span><span class="op money">${fmt(p.price)}</span></label>`).join('')}</div>`:''}
     ${i.spice?`<div class="grp"><div class="gh"><b>Spice level</b><small>Required</small></div>${SPICE.map((s,k)=>`<label class="opt"><input type="radio" name="spice" value="${s}" ${(ex.spice||'Medium')===s?'checked':''}><span class="ol">${s}</span></label>`).join('')}</div>`:''}
@@ -402,7 +413,7 @@ function renderCart(){const t=totals();const l=loc();const list=$('#cartList');
     ${S.tip==='custom'?`<input type="number" min="0" step="0.5" id="tipCustom" value="${S.tipCustom||''}" placeholder="Tip amount $" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:8px;font-size:16px">`:''}
     <div class="tot big"><span>Total</span><span class="money">${fmt(t.total)}</span></div>
     ${minOk?'':`<div class="ferr">Delivery minimum is ${fmt(l.deliveryMin)}.</div>`}
-    <button class="btn btn-p" id="checkoutBtn" ${minOk?'':'disabled'} style="margin-top:8px">Checkout · <span class="money">${fmt(t.total)}</span></button>`;}
+    <button class="btn btn-p" id="checkoutBtn" ${minOk&&!DATA.ordering.paused?'':'disabled'} style="margin-top:8px">${DATA.ordering.paused?'Ordering paused':'Checkout'} · <span class="money">${fmt(t.total)}</span></button>`;}
 $('#cartList').onclick=e=>{const row=e.target.closest('.ci');if(!row)return;const c=S.cart.find(x=>x.key===row.dataset.k);const d=e.target.closest('[data-d]');
   if(d){c.qty=Math.max(0,Math.min(20,c.qty+ +d.dataset.d));if(!c.qty)S.cart=S.cart.filter(x=>x!==c);saveCart();}
   else if(e.target.closest('[data-rm]')){S.cart=S.cart.filter(x=>x!==c);saveCart();}
@@ -440,18 +451,27 @@ function openCheckout(){const l=loc();const t=totals();const saved=LS.get('ne.me
       const oi=openInfo();if(S.when==='asap'&&!oi.open)errs.push('We’re closed right now — pick a time');
       if(errs.length){$('#coErr',s).textContent=errs[0];return;}
       const me={first:v('first'),last:v('last'),phone:v('phone'),email:v('email'),addr:v('addr'),apt:v('apt'),zip:v('zip')};LS.set('ne.me',me);
+      // re-price every line from the current menu so a stale cart can't carry an old price or a sold-out dish
+      let changed=false;for(const c of [...S.cart]){const it=byId(c.id);if(!it||soldOut(it)){S.cart=S.cart.filter(x=>x!==c);changed=true;continue;}const p=it.prices[c.size]||it.prices[0];const u=+(p.price+it.extras.filter(e=>c.extras.includes(e.name)).reduce((a,e)=>a+e.price,0)).toFixed(2);if(Math.abs(u-c.unit)>0.001){c.unit=u;changed=true;}}
+      if(changed){saveCart();closeModal();toast('Menu changed — please review your order');openCart();return;}
+      if(DATA.ordering.paused){$('#coErr',s).textContent='Online ordering is paused right now. Please call '+l.phone;return;}
       const tt=totals();const prep=Math.max(20,...S.cart.map(c=>c.prep||20))+(S.mode==='delivery'?30:0);
-      const order={id:'NE-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,5).toUpperCase(),createdAt:new Date().toISOString(),status:'new',locationId:l.id,location:l.name,mode:S.mode,when:S.when,
+      if(!S.pendingId)S.pendingId='NE-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,5).toUpperCase(); // one id per attempt series: retries can never make two orders
+      const order={id:S.pendingId,createdAt:new Date().toISOString(),status:'new',locationId:l.id,location:l.name,mode:S.mode,when:S.when,
         customer:{name:me.first+' '+me.last,phone:me.phone,email:me.email},delivery:S.mode==='delivery'?{address:me.addr,apt:me.apt,zip:me.zip}:null,notes:v('onote'),payment:'pay_'+(S.mode==='delivery'?'at_door':'at_pickup'),
         lines:S.cart.map(c=>({name:c.name,size:c.sizeName,qty:c.qty,unit:c.unit,spice:c.spice,extras:c.extras,note:c.note})),subtotal:+tt.sub.toFixed(2),tax:+tt.tax.toFixed(2),fee:+tt.fee.toFixed(2),tip:+tt.tip.toFixed(2),total:+tt.total.toFixed(2),estMinutes:prep};
-      const b=$('#placeBtn',s);b.disabled=true;b.textContent='Placing order…';
-      try{await Store.save(order);}catch(e){b.disabled=false;b.textContent='Place order';$('#coErr',s).textContent='Could not place the order. Please try again or call '+l.phone;return;}
-      S.cart=[];saveCart();closeModal();closeCart();showDone(order);};});}
+      const b=$('#placeBtn',s);if(b.disabled)return;b.disabled=true;b.textContent='Placing order…';
+      try{await Store.save(order);}catch(e){b.disabled=false;b.textContent='Place order';$('#coErr',s).innerHTML='We couldn’t send your order (connection problem). Your cart is saved — try again, or call <a href="tel:'+l.phone.replace(/\D/g,'')+'">'+esc(l.phone)+'</a>.';return;}
+      S.pendingId=null;S.cart=[];saveCart();closeModal();closeCart();showDone(order);};});}
 
 /* ---------- order store (shared when available, local otherwise) ---------- */
 const Store={mode:'local',db:null,
   async init(){try{if(window.claude&&claude.use){const db=await Promise.race([claude.use('db'),new Promise(r=>setTimeout(()=>r(null),4000))]);if(db){this.db=db;this.mode='shared';}}}catch(e){}},
-  async save(o){if(this.db){await this.db.doc('orders/'+o.id).set(o);}const a=LS.get('ne.orders',[]);a.unshift(o);LS.set('ne.orders',a.slice(0,200));try{localStorage.setItem('ne.ping',String(Date.now()))}catch(e){}},
+  attempts:0,
+  async save(o){const a0=LS.get('ne.orders',[]);if(a0.some(x=>x.id===o.id))return; // idempotent: same id never saved twice
+    if(this.db){let err;for(let i=0;i<3;i++){this.attempts++;try{await Promise.race([this.db.doc('orders/'+o.id).set(o),new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000))]);err=null;break;}catch(e){err=e;await new Promise(r=>setTimeout(r,Math.min(4000,400*2**i)+Math.random()*300));}}if(err)throw err;}
+    else if(this.failNext>0){this.failNext--;this.attempts++;throw new Error('simulated network failure');}
+    const a=LS.get('ne.orders',[]);if(!a.some(x=>x.id===o.id)){a.unshift(o);LS.set('ne.orders',a.slice(0,200));}try{localStorage.setItem('ne.ping',String(Date.now()))}catch(e){}},
   async update(id,patch){if(this.db){await this.db.doc('orders/'+id).update(patch);}const a=LS.get('ne.orders',[]);const o=a.find(x=>x.id===id);if(o){Object.assign(o,patch);LS.set('ne.orders',a);}try{localStorage.setItem('ne.ping',String(Date.now()))}catch(e){}},
   subscribe(cb){const local=()=>cb(LS.get('ne.orders',[]));
     if(this.db){try{const q=this.db.collection('orders').orderBy('createdAt','desc').limit(100);const un=q.onSnapshot(snap=>{const docs=snap&&snap.docs?snap.docs.map(d=>typeof d.data==='function'?d.data():d):(Array.isArray(snap)?snap:[]);cb(docs);});return un;}catch(e){local();}}
@@ -498,6 +518,7 @@ let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on
 function renderAll(){renderStore();renderTabs();renderSections();renderCart();}
 renderAll();route();
 setInterval(()=>{if(!$('#viewMenu').hidden)renderWhen();},60000);
+addEventListener('error',()=>toast('Something went wrong — your cart is safe'));addEventListener('unhandledrejection',e=>{e.preventDefault();toast('Something went wrong — your cart is safe');});
 window.__NE={S,Store,totals,DATA};
 })();
 </script>

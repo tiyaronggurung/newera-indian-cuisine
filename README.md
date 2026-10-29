@@ -21,7 +21,14 @@ Plain HTML/CSS/JS — open `index.html` in a browser or drop the folder on any s
 - Tests (Playwright; serve the folder first: `python3 -m http.server 8765`):
   - `node test.scenarios.js` — 17 guest-ordering scenarios × phone/tablet/desktop (51 runs): guest checkout with no account, size/spice/extras/notes, cart merge/edit/remove, tax & tips, validation, delivery minimum + address, closed-hours scheduling, cart persistence, location switch, search, dialogs, staff board status flow, cross-tab updates, confirmation page.
   - `node test.responsive.js` — full order flow with screenshots at three sizes.
+  - `node test.reliability.js` — duplicate submit, network failure + retry (same order id), sold-out, paused ordering, stale prices, offline menu cache, cart isolation, XSS.
   - `node test.concurrency.js 40` — 40 simultaneous customers.
+  - `node ladder.js 250 50` — concurrency ladder with p50/p95 timings.
+
+See `docs/ENGINEERING-AUDIT.md` for the full audit, measured results and the recommended production architecture.
+
+### Menu flags
+`menu.json` → `ordering.paused` (true + `pausedMessage` stops online orders), and per item `available:false` marks a dish sold out.
 
 ### Guest checkout
 There are no accounts. A customer orders with first name, last name and mobile number; email is optional (for a receipt). Details are remembered on that device for next time.
