@@ -361,6 +361,7 @@ function card(i){const min=Math.min(...i.prices.map(p=>p.price));const multi=i.p
 function secHTML(c,its){return `<section class="sec" id="sec-${c.id}"><h2>${esc(c.label)}</h2>${c.desc?`<div class="cd">${esc(c.desc)}</div>`:''}<div class="grid">${its.map(card).join('')}</div></section>`;}
 function popHTML(){const pop=DATA.popular.map(byId).filter(i=>i&&i.loc.includes(S.loc)).slice(0,6);return pop.length?`<section class="sec" id="sec-popular"><h2>Popular right now</h2><div class="cd">What the neighbourhood orders most.</div><div class="grid">${pop.map(card).join('')}</div></section>`:'';}
 function skeletonHTML(label,n){return `<section class="sec skel" id="sec-loading" aria-busy="true"><h2>${esc(label)}</h2><div class="cd"><span class="sk sk-t" style="width:220px"></span></div><div class="grid">${Array.from({length:n},()=>`<div class="item sk-card"><div><span class="sk sk-t" style="width:60%"></span><span class="sk sk-t" style="width:90%"></span><span class="sk sk-t" style="width:40%"></span></div><span class="sk sk-img"></span></div>`).join('')}</div></section>`;}
+const CAT_SKELETON_MS=1000; // how long the skeleton shows after a category tap
 let loadTimer=null;
 function renderSections(){const q=S.q.trim().toLowerCase();let h='';clearTimeout(loadTimer);
   if(q){const cats=catsFor();const pool=cats.flatMap(c=>itemsFor(c.id));const nm=pool.filter(i=>i.name.toLowerCase().includes(q));const ds=pool.filter(i=>!nm.includes(i)&&i.desc.toLowerCase().includes(q));
@@ -375,7 +376,7 @@ function renderSections(){const q=S.q.trim().toLowerCase();let h='';clearTimeout
 function showCat(id){if(id===S.cat&&!$('#sec-loading'))return scrollTop();S.cat=id;LS.set('ne.cat',id);markTab();clearTimeout(loadTimer);
   const c=catsFor().find(c=>c.id===id);const label=id==='all'?'Full menu':id==='popular'?'Popular right now':c?c.label:'';const n=id==='all'?8:id==='popular'?6:Math.min(c?c.count:6,8);
   $('#sections').innerHTML=skeletonHTML(label,n);scrollTop();
-  loadTimer=setTimeout(()=>{renderSections();scrollTop();},1500);}
+  loadTimer=setTimeout(()=>{renderSections();scrollTop();},CAT_SKELETON_MS);}
 function scrollTop(){const top=$('#sections').getBoundingClientRect().top+scrollY-(60+70);window.scrollTo({top:Math.max(0,top),behavior:'auto'});}
 $('#sections').onclick=e=>{const b=e.target.closest('.item');if(b)openItem(b.dataset.id);};
 $('#tabs').onclick=e=>{const t=e.target.closest('.tab');if(!t)return;if(S.q){$('#q').value='';S.q='';$('#searchRow').classList.remove('on');$('#searchBtn').classList.remove('on');}showCat(t.dataset.c);};

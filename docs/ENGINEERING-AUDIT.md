@@ -35,7 +35,7 @@
 | F9 | No request timeout / bounded retry on submit | Medium | **FIXED** — 8 s timeout, 3 attempts, exponential backoff + jitter |
 | F10 | Unhandled JS error could leave a blank screen | Low | **FIXED** — global error handlers show a non-blocking "your cart is safe" toast |
 | F11 | iPhone Safari zoomed into form fields | Low | **FIXED** earlier (all fields 16 px) |
-| F12 | Category tabs scrolled a long page instead of showing the category | Low (UX) | **FIXED** earlier (tab view + 1.5 s skeleton) |
+| F12 | Category tabs scrolled a long page instead of showing the category | Low (UX) | **FIXED** earlier (tab view + 1 s skeleton) |
 | F13 | Staff board has no access control | Medium | OPEN — needs backend auth (§7) |
 | F14 | No monitoring, logging, alerting | Medium | NOT TESTED / BLOCKED — nothing to monitor until there is a backend |
 | F15 | Images are 480 px JPEG; no WebP/AVIF, no responsive `srcset` | Low | OPEN — optional; current transfer is 846 KB for the whole first screen |
