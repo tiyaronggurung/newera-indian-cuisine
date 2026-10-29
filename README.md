@@ -25,7 +25,7 @@ Plain HTML/CSS/JS — open `index.html` in a browser or drop the folder on any s
   - `node test.concurrency.js 40` — 40 simultaneous customers.
   - `node ladder.js 250 50` — concurrency ladder with p50/p95 timings.
 
-See `docs/ENGINEERING-AUDIT.md` for the full audit, measured results and the recommended production architecture.
+See `docs/ORDER-ARCHITECTURE.md` for how orders flow (payment gate, kitchen display, data model, API) and `docs/ENGINEERING-AUDIT.md` for the full audit, measured results and the recommended production architecture.
 
 ### Menu flags
 `menu.json` → `ordering.paused` (true + `pausedMessage` stops online orders), and per item `available:false` marks a dish sold out.
